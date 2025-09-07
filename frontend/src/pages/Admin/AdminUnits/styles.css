@@ -1,0 +1,522 @@
+  /* Sub-navbar styling */
+  .sub-navbar {
+      background: white;
+      border-bottom: 2px solid #e9ecef;
+      position: fixed;
+      top: 70px;
+      left: 0;
+      right: 0;
+      z-index: 1025;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .sub-navbar .nav-link {
+      color: var(--text-muted) !important;
+      font-weight: 500;
+      padding: 0.8rem 1rem !important;
+      font-size: 0.9rem;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+  }
+
+  .sub-navbar .nav-link:hover,
+  .sub-navbar .nav-link.active {
+      color: var(--primary-color) !important;
+      border-bottom-color: var(--primary-color);
+      background-color: rgba(44, 90, 160, 0.05);
+  }
+
+  /* Added sidebar layout styling */
+  .admin-layout {
+      display: flex;
+      min-height: 500px;
+  }
+
+  .sidebar {
+      width: 250px;
+      background: #f8f9fa;
+      border-right: 2px solid #e9ecef;
+      position: relative;
+      top: 0;
+      bottom: 0;
+      overflow-y: auto;
+      z-index: 1020;
+  }
+
+  .sidebar-nav {
+      padding: 1rem 0;
+  }
+
+  .sidebar-nav .nav-link {
+      color: var(--text-muted) !important;
+      font-weight: 500;
+      padding: 0.8rem 1.5rem !important;
+      font-size: 0.9rem;
+      border-left: 3px solid transparent;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+  }
+
+  .sidebar-nav .nav-link i {
+      margin-right: 0.5rem;
+      width: 16px;
+  }
+
+  .sidebar-nav .nav-link:hover,
+  .sidebar-nav .nav-link.active {
+      color: var(--primary-color) !important;
+      border-left-color: var(--primary-color);
+      background-color: rgba(44, 90, 160, 0.05);
+  }
+
+  .main-content {
+      flex: 1;
+      margin-left: 0;
+      padding: 1.5rem;
+  }
+
+  /* Content cards */
+  .content-card {
+      background: white;
+      border: 1px solid #e9ecef;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+      margin-bottom: 1.5rem;
+  }
+
+  .content-card .card-header {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-bottom: 2px solid #e9ecef;
+      padding: 0.8rem 1.2rem;
+  }
+
+  .content-card .card-title {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin: 0;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+  }
+
+  .content-card .card-title i {
+      margin-right: 0.4rem;
+      font-size: 0.9rem;
+  }
+
+  .content-card .card-body {
+      padding: 1rem;
+  }
+
+  /* Table styling */
+  .admin-table {
+      font-size: 0.85rem;
+  }
+
+  .admin-table th {
+      background: #f8f9fa;
+      border-bottom: 2px solid #e9ecef;
+      font-weight: 600;
+      color: var(--primary-color);
+      padding: 0.6rem;
+  }
+
+  .admin-table td {
+      padding: 0.6rem;
+      border-bottom: 1px solid #f1f3f4;
+  }
+
+  .status-badge {
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+      font-weight: 500;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+      .sidebar {
+          width: 200px;
+      }
+
+      .main-content {
+          margin-left: 0;
+          padding: 1rem;
+      }
+
+      body {
+          padding-top: 110px;
+      }
+  }
+
+  @media (max-width: 576px) {
+      .sidebar {
+          width: 100%;
+          position: relative;
+          top: 0;
+          height: auto;
+      }
+
+      .main-content {
+          margin-left: 0;
+      }
+
+      .admin-layout {
+          flex-direction: column;
+      }
+  }
+
+  /* Admin Units Card Styling */
+  .admin-units-container {
+      max-width: 1200px;
+      margin: 4rem auto 0 auto;
+      padding: 1rem;
+  }
+
+  .admin-units-card {
+      background: white;
+      border: 1px solid #e9ecef;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 1rem;
+      overflow: hidden;
+      border-radius: 12px;
+  }
+
+  /* Tree Sidebar Styling */
+  .tree-sidebar {
+      width: 40%;
+      background: #f8f9fa;
+      border-right: 2px solid #e9ecef;
+      display: flex;
+      flex-direction: column;
+      min-height: 500px;
+  }
+
+  .tree-header {
+      background: linear-gradient(135deg, #2c5aa0 0%, #1e3a5f 100%);
+      color: white;
+      padding: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  }
+
+  .tree-header h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+  }
+
+  .add-root-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+  }
+
+  .add-root-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .tree-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.3rem;
+      max-height: 500px;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e0 #f7fafc;
+  }
+
+  .tree-container::-webkit-scrollbar {
+      width: 8px;
+  }
+
+  .tree-container::-webkit-scrollbar-track {
+      background: #f7fafc;
+      border-radius: 4px;
+  }
+
+  .tree-container::-webkit-scrollbar-thumb {
+      background: #cbd5e0;
+      border-radius: 4px;
+  }
+
+  .tree-container::-webkit-scrollbar-thumb:hover {
+      background: #a0aec0;
+  }
+
+  .tree-empty {
+      text-align: center;
+      padding: 1.5rem;
+      color: #6c757d;
+  }
+
+  .tree-empty p {
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+  }
+
+  /* Tree Node Styling */
+  .tree-node {
+      margin-bottom: 2px;
+  }
+
+  .tree-item {
+      display: flex;
+      align-items: center;
+      padding: 0.4rem 0.3rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      position: relative;
+  }
+
+  .tree-item:hover {
+      background: rgba(44, 90, 160, 0.1);
+  }
+
+  .tree-item.selected {
+      background: #2c5aa0;
+      color: white;
+  }
+
+  .tree-toggle {
+      margin-right: 0.3rem;
+      font-size: 0.7rem;
+      cursor: pointer;
+      user-select: none;
+      width: 12px;
+      text-align: center;
+  }
+
+  .tree-icon {
+      margin-right: 0.4rem;
+      font-size: 0.9rem;
+  }
+
+  .tree-label {
+      flex: 1;
+      font-size: 0.9rem;
+      font-weight: 500;
+  }
+
+  .tree-code {
+      font-size: 0.8rem;
+      color: #6c757d;
+      margin-right: 0.5rem;
+  }
+
+  .tree-item.selected .tree-code {
+      color: rgba(255, 255, 255, 0.8);
+  }
+
+  .tree-actions {
+      display: flex;
+      gap: 0.2rem;
+      margin-left: auto;
+  }
+
+  .tree-edit,
+  .tree-delete {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      opacity: 0.6;
+      transition: opacity 0.2s ease;
+      padding: 0.2rem;
+      border-radius: 3px;
+  }
+
+  .tree-edit:hover,
+  .tree-delete:hover {
+      opacity: 1;
+  }
+
+  .tree-edit:hover {
+      background: rgba(40, 167, 69, 0.1);
+  }
+
+  .tree-delete:hover {
+      background: rgba(220, 53, 69, 0.1);
+  }
+
+  .tree-item.selected .tree-edit,
+  .tree-item.selected .tree-delete {
+      opacity: 0.8;
+  }
+
+  .tree-children {
+      margin-left: 0;
+  }
+
+  /* Form Content Styling */
+  .form-content {
+      width: 60%;
+      padding: 1rem;
+      background: white;
+  }
+
+  .form-header {
+      margin-bottom: 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid #e9ecef;
+  }
+
+  .form-header h3 {
+      color: #2c5aa0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0 0 0.4rem 0;
+  }
+
+  .selected-parent {
+      background: #e3f2fd;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #1565c0;
+  }
+
+  .editing-unit {
+      background: #fff3cd;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+  }
+
+  /* Form Styling */
+  .unit-form {
+      max-width: 450px;
+  }
+
+  .form-group {
+      margin-bottom: 1rem;
+  }
+
+  .form-group label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+      color: #333;
+      font-size: 0.85rem;
+  }
+
+  .form-input,
+  .form-select {
+      width: 100%;
+      padding: 0.6rem 0.7rem;
+      border: 2px solid #e9ecef;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+      background: white;
+  }
+
+  .form-input:focus,
+  .form-select:focus {
+      outline: none;
+      border-color: #2c5aa0;
+      box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+  }
+
+  .form-info {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 6px;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+  }
+
+  .form-info p {
+      margin: 0.3rem 0;
+      font-size: 0.9rem;
+      color: #856404;
+  }
+
+  .form-actions {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1.2rem;
+  }
+
+  .submit-btn {
+      background: linear-gradient(135deg, #2c5aa0 0%, #1e3a5f 100%);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 100px;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(44, 90, 160, 0.3);
+  }
+
+  .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+  }
+
+  .cancel-btn {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+  }
+
+  .cancel-btn:hover {
+      background: #5a6268;
+      transform: translateY(-1px);
+  }
+
+  /* Responsive Design for New Layout */
+  @media (max-width: 768px) {
+      .admin-units-container {
+          padding: 0.5rem;
+      }
+
+      .admin-layout {
+          flex-direction: column;
+      }
+
+      .tree-sidebar {
+          width: 100%;
+          min-height: 250px;
+      }
+
+      .tree-container {
+          max-height: 300px;
+      }
+
+      .form-content {
+          width: 100%;
+          padding: 0.8rem;
+      }
+
+      .form-actions {
+          flex-direction: column;
+      }
+
+      .submit-btn,
+      .cancel-btn {
+          width: 100%;
+      }
+  }

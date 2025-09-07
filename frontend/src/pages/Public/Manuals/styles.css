@@ -1,0 +1,215 @@
+/* Page title card styling */
+.page-title-card {
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    margin: 1rem 0;
+    padding: 1.2rem;
+}
+
+.page-title-card .page-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.4rem;
+}
+
+.page-title-card .page-description {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* Breadcrumb */
+.breadcrumb-section {
+    background: white;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.breadcrumb {
+    margin: 0;
+    background: none;
+    padding: 0;
+    font-size: 0.9rem;
+}
+
+.breadcrumb-item a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: var(--text-muted);
+}
+
+/* Search and filter section */
+.search-filter-section {
+    background: white;
+    margin: 1rem 0;
+    padding: 1rem;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e9ecef;
+}
+
+/* Content sections */
+.content-section {
+    background: white;
+    margin: 2rem 0;
+    padding: 1.5rem 0 0 0;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e9ecef;
+}
+
+.section-header {
+    padding: 0.8rem 1.2rem;
+    border-bottom: 2px solid #e9ecef;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.section-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.section-title i {
+    margin-right: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.section-body {
+    padding: 1rem;
+}
+
+/* Document cards */
+.document-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}
+
+.document-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.document-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.4rem;
+}
+
+.document-description {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
+}
+
+.document-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+}
+
+.document-actions {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.btn-document {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Category badges */
+.category-badge {
+    display: inline-block;
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+    margin-right: 0.3rem;
+    font-weight: 500;
+}
+
+/* File type icons */
+.file-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.8rem;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.file-icon.pdf {
+    background-color: #ff5722;
+    color: white;
+}
+
+.file-icon.doc {
+    background-color: #2196f3;
+    color: white;
+}
+
+.file-icon.xls {
+    background-color: #4caf50;
+    color: white;
+}
+
+/* Stats cards */
+.stats-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.stats-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.3rem;
+}
+
+.stats-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar-brand .brand-text {
+        display: none;
+    }
+
+    .page-title-card .page-title {
+        font-size: 1.3rem;
+    }
+
+    .document-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }
+}
