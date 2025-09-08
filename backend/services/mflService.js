@@ -328,6 +328,111 @@ class MflService {
 
         return { inserted, updated, total: rows.length };
     }
+
+    /**
+     * Upsert MFL rows from parsed CSV objects.
+     * Expected keys per row: uid, name, shortname, longtitude, latitude, nhfrid,
+     * subcounty_uid, subcounty, district_uid, district, region, level, ownership,
+     * authority, status, facility_id, subcounty_id, district_id, region_id,
+     * licensed, address, contact_personemail, contact_personmobile, contact_personname,
+     * contact_persontitle, date_opened, bed_capacity, services, user_district_id, owner_id.
+     *
+     * Upsert priority: uid -> nhfrid -> create new.
+     */
+    static async uploadFromCsv(rows, ownerId) {
+        if (!ownerId) {
+            throw new Error("ownerId is required to upload MFL data");
+        }
+        if (!Array.isArray(rows) || rows.length === 0) {
+            return { inserted: 0, updated: 0, total: 0 };
+        }
+
+        const coerceInt = (v) => {
+            const n = parseInt(String(v ?? '').trim(), 10);
+            return Number.isFinite(n) ? n : null;
+        };
+        const coerceFloat = (v) => {
+            const n = parseFloat(String(v ?? '').trim());
+            return Number.isFinite(n) ? n : null;
+        };
+        const coerceDate = (v) => {
+            if (!v) return null;
+            const d = new Date(v);
+            return isNaN(d.getTime()) ? null : d;
+        };
+        const coerceJsonArray = (v) => {
+            if (!v) return [];
+            if (Array.isArray(v)) return v;
+            const s = String(v).trim();
+            try {
+                const parsed = JSON.parse(s);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch {
+                // Fallback: split by comma
+                return s.length ? s.split(',').map(x => x.trim()).filter(Boolean) : [];
+            }
+        };
+
+        let inserted = 0;
+        let updated = 0;
+
+        await sequelize.transaction(async (t) => {
+            for (const r of rows) {
+                const payload = {
+                    uid: r.uid ?? null,
+                    name: r.name ?? null,
+                    shortname: r.shortname ?? null,
+                    longtitude: coerceFloat(r.longtitude),
+                    latitude: coerceFloat(r.latitude),
+                    nhfrid: r.nhfrid ?? null,
+                    subcounty_uid: r.subcounty_uid ?? null,
+                    subcounty: r.subcounty ?? null,
+                    district_uid: r.district_uid ?? null,
+                    district: r.district ?? null,
+                    region: r.region ?? null,
+                    level: r.level ?? null,
+                    ownership: r.ownership ?? null,
+                    authority: r.authority ?? null,
+                    status: r.status ?? null,
+                    facility_id: coerceInt(r.facility_id),
+                    subcounty_id: coerceInt(r.subcounty_id),
+                    district_id: coerceInt(r.district_id),
+                    region_id: coerceInt(r.region_id),
+                    licensed: r.licensed ?? null,
+                    address: r.address ?? null,
+                    contact_personemail: r.contact_personemail ?? null,
+                    contact_personmobile: r.contact_personmobile ?? null,
+                    contact_personname: r.contact_personname ?? null,
+                    contact_persontitle: r.contact_persontitle ?? null,
+                    date_opened: coerceDate(r.date_opened),
+                    bed_capacity: r.bed_capacity ?? null,
+                    services: coerceJsonArray(r.services),
+                    user_district_id: coerceInt(r.user_district_id),
+                    owner_id: ownerId,
+                };
+
+                // Determine update criteria
+                let where = null;
+                if (payload.uid) where = { uid: payload.uid };
+                else if (payload.nhfrid) where = { nhfrid: payload.nhfrid };
+
+                if (where) {
+                    const [count] = await Mfl.update(payload, { where, transaction: t });
+                    if (count === 0) {
+                        await Mfl.create(payload, { transaction: t });
+                        inserted += 1;
+                    } else {
+                        updated += 1;
+                    }
+                } else {
+                    await Mfl.create(payload, { transaction: t });
+                    inserted += 1;
+                }
+            }
+        });
+
+        return { inserted, updated, total: rows.length };
+    }
 }
 
 export default MflService;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useCallback } from "react";
+import React, { useState, useEffect, Fragment, useCallback, useRef } from "react";
 import * as XLSX from "xlsx";
 import { Link } from 'react-router-dom';
 import API from "../../helpers/api";
@@ -7,7 +7,7 @@ import Filters from "./Filters";
 import './styles.css'
 import Search from "./Search";
 
-const FacilityList = ({ url, link }) => {
+const FacilityList = ({ url, link, showUpload = false }) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [exporting, setExporting] = useState(false);
@@ -16,6 +16,9 @@ const FacilityList = ({ url, link }) => {
     const [activeFilters, setActiveFilters] = useState({});
     const [clearSignal, setClearSignal] = useState(0);
     const [paging, setPaging] = useState(false);
+    const fileRef = useRef(null);
+    const [uploading, setUploading] = useState(false);
+    const [uploadMsg, setUploadMsg] = useState("");
 
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
@@ -153,6 +156,31 @@ const FacilityList = ({ url, link }) => {
         }
     };
 
+    const onClickUpload = () => fileRef.current?.click();
+    const onFileChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setUploadMsg("");
+        setUploading(true);
+        try {
+            const form = new FormData();
+            form.append('file', file);
+            const token = localStorage.getItem('token');
+            const { data } = await API.post('/mfl/upload', form, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUploadMsg(`Upload completed: inserted ${data.inserted}, updated ${data.updated}`);
+            // Refresh first page after upload
+            await fetchData(1);
+            setPagination(prev => ({ ...prev, currentPage: 1 }));
+        } catch (err) {
+            setUploadMsg(err.response?.data?.error || err.message);
+        } finally {
+            setUploading(false);
+            if (fileRef.current) fileRef.current.value = '';
+        }
+    };
+
     return (
         <Fragment>
             <FNModal
@@ -206,6 +234,23 @@ const FacilityList = ({ url, link }) => {
                                 <span class="facility-count">({pagination.totalItems} total)</span>
                             </h5>
                             <div class="export-buttons d-flex align-items-center">
+                                {showUpload && (
+                                    <>
+                                        <input type="file" ref={fileRef} accept=".csv" onChange={onFileChange} style={{ display: 'none' }} />
+                                        <button class="btn btn-primary btn-sm me-2" onClick={onClickUpload} disabled={uploading}>
+                                            {uploading ? (
+                                                <>
+                                                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                                    Uploading...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <i class="fas fa-upload me-1"></i> Upload MFL
+                                                </>
+                                            )}
+                                        </button>
+                                    </>
+                                )}
                                 <button class="btn btn-export btn-excel me-2" onClick={handleExportExcel} disabled={exporting}>
                                     {exporting ? (
                                         <>
@@ -251,6 +296,9 @@ const FacilityList = ({ url, link }) => {
                     </div>
 
                     <div class="table-container">
+                        {uploadMsg && (
+                            <div className="alert alert-info py-2">{uploadMsg}</div>
+                        )}
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>

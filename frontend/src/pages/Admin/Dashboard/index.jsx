@@ -12,6 +12,7 @@ const Dashboard = () => {
     nonFunctional: 0,
   })
   const [loading, setLoading] = useState(true)
+  const [summary, setSummary] = useState([])
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -19,12 +20,24 @@ const Dashboard = () => {
         const { data } = await API.get('/mfl/stats')
         setStats(data)
       } catch (e) {
-        // fail silently on dashboard
       } finally {
         setLoading(false)
       }
     }
     fetchStats()
+  }, [])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await API.get('/mfl/summary/level-ownership')
+        setSummary(data)
+      } catch (e) {
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
   }, [])
 
   return (
@@ -97,114 +110,41 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="row">
-          <div className="col-md-12">
-            <div className="dashboard-card">
-              <div className="card-header">
-                <h5 className="card-title">
-                  <i className="fas fa-history"></i>
-                  Recent Activities
-                </h5>
-              </div>
-              <div className="card-body">
-                <div className="table-responsive">
-                  <table className="table activity-table">
-                    <thead>
-                      <tr>
-                        <th>Time</th>
-                        <th>User</th>
-                        <th>Action</th>
-                        <th>Facility</th>
-                        <th>Status</th>
+        <div class="container">
+          <div class="content-section">
+            <div class="section-header">
+              <h5 class="section-title">
+                <i class="fas fa-table"></i>
+                Summary of Health Facilities By Level and Ownership
+              </h5>
+            </div>
+            <div class="section-body">
+              <div class="table-responsive">
+                <table class="table summary-table">
+                  <thead>
+                    <tr>
+                      <th>FACILITY LEVEL</th>
+                      <th class="text-center">GOVERNMENT</th>
+                      <th class="text-center">PRIVATE FOR PROFIT</th>
+                      <th class="text-center">PRIVATE NOT FOR PROFIT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {summary.map((row) => (
+                      <tr key={row.level}>
+                        <td><strong>{row.level}</strong></td>
+                        <td class="text-center">{(row.GOV || 0).toLocaleString()}</td>
+                        <td class="text-center">{(row.PFP || 0).toLocaleString()}</td>
+                        <td class="text-center">{(row.PNFP || 0).toLocaleString()}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>10:30 AM</td>
-                        <td>Dr. Sarah Nakamya</td>
-                        <td>Updated facility info</td>
-                        <td>Frank Health Center IV</td>
-                        <td><span className="badge bg-success status-badge">Completed</span></td>
-                      </tr>
-                      <tr>
-                        <td>09:45 AM</td>
-                        <td>Admin User</td>
-                        <td>Approved new facility</td>
-                        <td>Kampala Medical Center</td>
-                        <td><span className="badge bg-success status-badge">Approved</span></td>
-                      </tr>
-                      <tr>
-                        <td>09:15 AM</td>
-                        <td>John Mukasa</td>
-                        <td>Submitted facility request</td>
-                        <td>Nakawa Health Center</td>
-                        <td><span className="badge bg-warning status-badge">Pending</span></td>
-                      </tr>
-                      <tr>
-                        <td>08:30 AM</td>
-                        <td>System</td>
-                        <td>Data backup completed</td>
-                        <td>-</td>
-                        <td><span className="badge bg-info status-badge">System</span></td>
-                      </tr>
-                      <tr>
-                        <td>08:00 AM</td>
-                        <td>Mary Achieng</td>
-                        <td>User registration</td>
-                        <td>-</td>
-                        <td><span className="badge bg-success status-badge">Active</span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
-
-          {/* <div className="col-md-4">
-            <div className="dashboard-card">
-              <div className="card-header">
-                <h5 className="card-title">
-                  <i className="fas fa-exclamation-triangle"></i>
-                  Pending Requests
-                </h5>
-              </div>
-              <div className="card-body">
-                <div className="d-flex justify-content-between align-items-center mb-3 p-2" style={{ background: '#fff3cd', borderLeft: '4px solid #ffc107' }}>
-                  <div>
-                    <div className="fw-bold" style={{ fontSize: '0.85rem' }}>New Facility Registration</div>
-                    <small className="text-muted">Submitted 2 hours ago</small>
-                  </div>
-                  <span className="badge bg-warning">12</span>
-                </div>
-
-                <div className="d-flex justify-content-between align-items-center mb-3 p-2" style={{ background: '#d1ecf1', borderLeft: '4px solid #17a2b8' }}>
-                  <div>
-                    <div className="fw-bold" style={{ fontSize: '0.85rem' }}>Facility Updates</div>
-                    <small className="text-muted">Requires approval</small>
-                  </div>
-                  <span className="badge bg-info">8</span>
-                </div>
-
-                <div className="d-flex justify-content-between align-items-center mb-3 p-2" style={{ background: '#f8d7da', borderLeft: '4px solid #dc3545' }}>
-                  <div>
-                    <div className="fw-bold" style={{ fontSize: '0.85rem' }}>System Alerts</div>
-                    <small className="text-muted">Requires attention</small>
-                  </div>
-                  <span className="badge bg-danger">3</span>
-                </div>
-
-                <div className="d-flex justify-content-between align-items-center p-2" style={{ background: '#d4edda', borderLeft: '4px solid #28a745' }}>
-                  <div>
-                    <div className="fw-bold" style={{ fontSize: '0.85rem' }}>User Verifications</div>
-                    <small className="text-muted">Account approvals</small>
-                  </div>
-                  <span className="badge bg-success">5</span>
-                </div>
-              </div>
-            </div>
-          </div> */}
         </div>
+
       </div>
     </Fragment>
   )

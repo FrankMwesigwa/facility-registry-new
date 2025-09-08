@@ -24,7 +24,6 @@ const Home = () => {
         setStats(statsRes.data)
         setSummary(summaryRes.data || [])
       } catch (e) {
-        // ignore on public home
       } finally {
         setLoading(false)
       }

@@ -1,10 +1,14 @@
 import express from 'express';
+import multer from 'multer';
+import { Readable } from 'stream';
+import csv from 'csv-parser';
 import crypto from 'crypto';
 import System from '../models/system.js';
 import authenticate from "../middleware/auth.js";
 import MflService from "../services/mflService.js";
 
 const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
 // POST /api/mfl/updates/webhook
 router.post('/updates/webhook', async (req, res) => {
@@ -64,11 +68,28 @@ router.get("/summary/level-ownership", async (req, res) => {
     }
 });
 
-// Upload from nhfr.facilityuploads into nhfr.mfl
-router.post("/upload", authenticate, async (req, res) => {
+// Upload CSV directly into nhfr.mfl
+router.post("/upload", authenticate, upload.single('file'), async (req, res) => {
     try {
         const ownerId = parseInt(req.user.id);
-        const result = await MflService.uploadFromFacilityUploads(ownerId);
+
+        // If no file provided, fallback to previous behavior (upload from staging table)
+        if (!req.file) {
+            const result = await MflService.uploadFromFacilityUploads(ownerId);
+            return res.status(200).json({ message: "Upload completed (from staging table)", ...result });
+        }
+
+        const rows = await new Promise((resolve, reject) => {
+            const out = [];
+            const stream = Readable.from(req.file.buffer);
+            stream
+                .pipe(csv())
+                .on('data', (row) => out.push(row))
+                .on('end', () => resolve(out))
+                .on('error', (err) => reject(err));
+        });
+
+        const result = await MflService.uploadFromCsv(rows, ownerId);
         res.status(200).json({ message: "Upload completed", ...result });
     } catch (error) {
         res.status(500).json({ error: error.message });
