@@ -26,7 +26,7 @@ router.get('/users', authenticate, isAdmin, async (req, res) => {
  * @desc Register a new user (admin only)
  * @access Private (Admin)
  */
-router.post('/register', authenticate, async (req, res) => {
+router.post('/register', async (req, res) => {
     try {
         const validatedData = validateUserRegistration(req.body);
         const user = await UserService.createUser(validatedData);

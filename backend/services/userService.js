@@ -4,13 +4,10 @@ import { v4 as uuidv4 } from 'uuid';
 import User from '../models/users.js';
 
 class UserService {
-    /**
-     * Create a new user
-     */
+
     async createUser(userData) {
-        const { email, password, firstname, lastname, phoneno, username, organisation, district_id, role} = userData;
+        const { email, password, firstname, lastname, phoneno, username, organisation, district_id } = userData;
         
-        // Check if user already exists
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             throw new Error('Email already registered');
@@ -34,9 +31,6 @@ class UserService {
         return user;
     }
 
-    /**
-     * Create a public user with email verification
-     */
     async createPublicUser(userData) {
         const { email, password, firstname, lastname, phoneno, username, organisation, district_id } = userData;
         
@@ -71,23 +65,14 @@ class UserService {
         return { user, verificationCode };
     }
 
-    /**
-     * Find user by email
-     */
     async findByEmail(email) {
         return await User.findOne({ where: { email } });
     }
 
-    /**
-     * Find user by username
-     */
     async findByUsername(username) {
         return await User.findOne({ where: { username } });
     }
 
-    /**
-     * Find user by ID
-     */
     async findById(id) {
         return await User.findByPk(id);
     }
@@ -111,9 +96,6 @@ class UserService {
         return await User.findOne({ where: { reset_token: token } });
     }
 
-    /**
-     * Get all users with pagination
-     */
     async getAllUsers(page = 1, limit = 50, role) {
         const offset = (page - 1) * limit;
         const where = role ? { role } : undefined;
@@ -121,9 +103,6 @@ class UserService {
         return { users: rows, total: count };
     }
 
-    /**
-     * Update user profile
-     */
     async updateProfile(userId, updateData) {
         const user = await User.findOne({ where: { id: userId } });
         if (!user) {
@@ -142,9 +121,6 @@ class UserService {
         return user;
     }
 
-    /**
-     * Update user by ID
-     */
     async updateUser(userId, updateData) {
         const { password, ...fields } = updateData;
         
@@ -164,9 +140,6 @@ class UserService {
         return await User.findByPk(userId);
     }
 
-    /**
-     * Delete user by ID
-     */
     async deleteUser(userId) {
         const result = await User.destroy({
             where: { id: userId },
