@@ -1,7 +1,5 @@
 import React, { useState, useEffect, Fragment, useCallback } from "react";
 import * as XLSX from "xlsx";
-import { jsPDF } from "jspdf";
-import autoTable from 'jspdf-autotable';
 import { Link } from 'react-router-dom';
 import API from "../../helpers/api";
 import FNModal from "../../components/FNModal";
@@ -11,11 +9,13 @@ import Search from "./Search";
 
 const FacilityList = ({ url, link }) => {
     const [data, setData] = useState([]);
-    const [facilities, setFacilities] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [exporting, setExporting] = useState(false);
     const [filterValue, setFilterValue] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [activeFilters, setActiveFilters] = useState({});
+    const [clearSignal, setClearSignal] = useState(0);
+    const [paging, setPaging] = useState(false);
 
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
@@ -65,44 +65,47 @@ const FacilityList = ({ url, link }) => {
         } finally {
             setLoading(false);
         }
+    }, [filterValue, activeFilters, link]);
+
+    const downloadData = useCallback(async () => {
+        try {
+            const queryParams = new URLSearchParams({
+                search: filterValue,
+                ...activeFilters
+            }).toString();
+
+            const token = localStorage.getItem('token');
+            const response = await API.get(`/mfl?export=all&${queryParams}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const transformedData = response.data.facilities.map(facility => ({
+                id: facility.id,
+                facility_id: (facility.nhfrid || facility.uid || String(facility.id)).toString(),
+                facility_name: facility.name,
+                name: facility.name,
+                shortname: facility.shortname || "",
+                longtitude: facility.longtitude || "",
+                latitude: facility.latitude || "",
+                status: facility.status || "",
+                level: facility.level,
+                ownership: facility.ownership,
+                authority: facility.authority,
+                subcounty: facility?.SubCounty?.name || "",
+                district: facility?.District?.name || "",
+                region: facility?.Region?.name || "",
+            }));
+
+            return transformedData;
+        } catch (error) {
+            console.error('Error loading data:', error);
+            return [];
+        }
     }, [filterValue, activeFilters]);
 
-    // const downloadData = useCallback(async () => {
-    //     try {
-    //         setLoading(true);
-    //         const queryParams = new URLSearchParams({
-    //             search: filterValue,
-    //             ...activeFilters
-    //         }).toString();
-
-    //         const token = localStorage.getItem('token');
-    //         const response = await API.get(`/facility/download/all?${queryParams}`, {
-    //             headers: { Authorization: `Bearer ${token}` }
-    //         });
-
-    //         const transformedData = response.data.facilities.map(facility => ({
-    //             id: facility.id,
-    //             facility_id: facility.unique_identifier.slice(6),
-    //             facility_name: facility.name,
-    //             level: facility.level,
-    //             ownership: facility.ownership,
-    //             authority: facility.authority,
-    //             subcounty: facility.SubCounty.name,
-    //             district: facility.District.name,
-    //             region: facility.Region.name,
-    //         }));
-
-    //         setFacilities(transformedData);
-    //     } catch (error) {
-    //         console.error('Error loading data:', error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // }, [filterValue, activeFilters]);
-
     useEffect(() => {
-        fetchData();
-    }, [activeFilters, fetchData]);
+        fetchData(pagination.currentPage);
+    }, [activeFilters, pagination.currentPage, fetchData]);
 
     const handleFilterChange = (value) => {
         setFilterValue(value);
@@ -116,94 +119,40 @@ const FacilityList = ({ url, link }) => {
         setPagination(prev => ({ ...prev, currentPage: 1 }));
     };
 
-    const handleExportExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet(facilities);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Facilities");
-        XLSX.writeFile(workbook, "uganda_mfl.xlsx");
-    };
-
-    const handleExportPDF = () => {
-        const doc = new jsPDF('l', 'mm', 'a4');
-        const pageWidth = doc.internal.pageSize.width;
-        const pageHeight = doc.internal.pageSize.height;
-
-        // Add Header Title
-        doc.setTextColor(0, 0, 0);
-        doc.setFontSize(16);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Ministry of Health Uganda', pageWidth / 2, 15, {
-            align: 'center'
-        });
-
-        // Add subtitle
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
-        doc.text('Master Health Facility List', pageWidth / 2, 22, {
-            align: 'center'
-        });
-
-        // Add current date
-        const currentDate = new Date().toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-        doc.setFontSize(10);
-        doc.text(`Printed on: ${currentDate}`, pageWidth - 15, 10, {
-            align: 'right'
-        });
-
-        // Table headers
-        const headers = [['Facility ID', 'Facility Name', 'Level', 'Ownership', 'Authority', 'SubCounty', 'District', 'Region']];
-        const mfl = facilities.map(item => [
-            item.facility_id,
-            item.facility_name,
-            item.level,
-            item.ownership,
-            item.authority,
-            item.subcounty,
-            item.district,
-            item.region
-        ]);
-
-        // Add table
-        autoTable(doc, {
-            head: headers,
-            body: mfl,
-            startY: 30,
-            margin: { top: 30 },
-            styles: { overflow: 'linebreak' },
-            headStyles: {
-                fillColor: [41, 128, 185],
-                textColor: 255,
-                fontStyle: 'bold'
-            },
-            alternateRowStyles: {
-                fillColor: [245, 245, 245]
-            },
-        });
-
-        // Add footer text
-        const pageCount = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-
-            // Footer text
-            doc.setFontSize(8);
-            doc.setTextColor(128, 128, 128); // Gray color
-            doc.text('System Generated Report', pageWidth / 2, pageHeight - 10, {
-                align: 'center'
-            });
-
-            // Page numbers
-            doc.text(`Page ${i} of ${pageCount}`, pageWidth - 15, pageHeight - 10, {
-                align: 'right'
-            });
+    const handlePageChange = async (page) => {
+        if (page < 1 || page > pagination.totalPages) return;
+        setPagination(prev => ({ ...prev, currentPage: page }));
+        try {
+            setPaging(true);
+            await fetchData(page);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } finally {
+            setPaging(false);
         }
-
-        doc.save('uganda_mfl.pdf');
     };
+
+    const handleClearAll = () => {
+        setActiveFilters({});
+        setFilterValue("");
+        setPagination(prev => ({ ...prev, currentPage: 1 }));
+        setClearSignal(prev => prev + 1);
+        fetchData(1);
+    };
+
+    const handleExportExcel = async () => {
+        setExporting(true);
+        try {
+            const rows = await downloadData();
+            const exportRows = rows.map(({ id, facility_name, ...rest }) => rest);
+            const worksheet = XLSX.utils.json_to_sheet(exportRows);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Facilities");
+            XLSX.writeFile(workbook, "uganda_mfl.xlsx");
+        } finally {
+            setExporting(false);
+        }
+    };
+
     return (
         <Fragment>
             <FNModal
@@ -233,15 +182,14 @@ const FacilityList = ({ url, link }) => {
                                 <Search
                                     onFilterChange={handleFilterChange}
                                     filterValue={filterValue}
+                                    clearSignal={clearSignal}
                                 />
                             </div>
                             <div class="col-md-4 text-end mt-3 mt-md-0" style={{ padding: '0 1rem' }}>
-                                <button class="btn btn-outline-primary btn-sm me-2" onClick={handleShow}>
-                                    <i class="fas fa-filter"></i> Apply Filters
+                                <button class="btn btn-filter-apply btn-sm me-2" onClick={handleShow}>
+                                    <i class="fas fa-filter me-1"></i> Apply Filters
                                 </button>
-                                {/* <button class="btn btn-outline-secondary btn-sm">
-                                    <i class="fas fa-times-circle"></i> Clear All
-                                </button> */}
+                                <button class="btn btn-filter-clear btn-sm" onClick={handleClearAll}>Clear Filters</button>
                             </div>
                         </div>
                     </div>
@@ -255,15 +203,49 @@ const FacilityList = ({ url, link }) => {
                             <h5 class="section-title">
                                 <i class="fas fa-hospital"></i>
                                 Health Facilities
-                                <span class="facility-count">(6,680 total)</span>
+                                <span class="facility-count">({pagination.totalItems} total)</span>
                             </h5>
-                            <div class="export-buttons">
-                                <button class="btn btn-export btn-excel" onClick={handleExportExcel}>
-                                    <i class="fas fa-file-excel me-1"></i> Excel
+                            <div class="export-buttons d-flex align-items-center">
+                                <button class="btn btn-export btn-excel me-2" onClick={handleExportExcel} disabled={exporting}>
+                                    {exporting ? (
+                                        <>
+                                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                            Generating...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i class="fas fa-file-excel me-1"></i> Excel
+                                        </>
+                                    )}
                                 </button>
-                                <button class="btn btn-export btn-pdf" onClick={handleExportPDF}>
-                                    <i class="fas fa-file-pdf me-1"></i> PDF
-                                </button>
+                                {/* PDF export removed */}
+                                <nav aria-label="Facilities pagination">
+                                    <ul class="pagination pagination-sm mb-0">
+                                        <li class={`page-item ${pagination.currentPage === 1 || paging ? 'disabled' : ''}`}>
+                                            <button class="page-link" onClick={() => handlePageChange(1)}>First</button>
+                                        </li>
+                                        <li class={`page-item ${pagination.currentPage === 1 || paging ? 'disabled' : ''}`}>
+                                            <button class="page-link" onClick={() => handlePageChange(pagination.currentPage - 1)}>Prev</button>
+                                        </li>
+                                        <li class="page-item disabled">
+                                            <span class="page-link">
+                                                Page {pagination.currentPage} of {pagination.totalPages}
+                                            </span>
+                                        </li>
+                                        <li class={`page-item ${pagination.currentPage === pagination.totalPages || paging ? 'disabled' : ''}`}>
+                                            <button class="page-link" onClick={() => handlePageChange(pagination.currentPage + 1)}>
+                                                {paging ? (
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                ) : (
+                                                    'Next'
+                                                )}
+                                            </button>
+                                        </li>
+                                        <li class={`page-item ${pagination.currentPage === pagination.totalPages || paging ? 'disabled' : ''}`}>
+                                            <button class="page-link" onClick={() => handlePageChange(pagination.totalPages)}>Last</button>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>

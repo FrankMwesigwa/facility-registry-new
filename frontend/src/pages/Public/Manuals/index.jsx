@@ -41,7 +41,7 @@ const Manuals = () => {
                     </div>
                     <div class="section-body">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="document-card">
                                     <div class="d-flex">
                                         <div class="file-icon pdf">
@@ -72,7 +72,38 @@ const Manuals = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="document-card">
+                                    <div class="d-flex">
+                                        <div class="file-icon pdf">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="document-title">Data Validation SOP</div>
+                                            <div class="document-description">
+                                                Standard procedures for validating and verifying health facility data entries.
+                                            </div>
+                                            <div class="document-meta">
+                                                <span><i class="fas fa-calendar"></i> Updated: Dec 20, 2023</span>
+                                                <span><i class="fas fa-file"></i> 1.8 MB</span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <span class="category-badge">SOP</span>
+                                                <span class="category-badge">Data Quality</span>
+                                            </div>
+                                            <div class="document-actions">
+                                                <button class="btn btn-primary btn-document">
+                                                    <i class="fas fa-download"></i> Download
+                                                </button>
+                                                <button class="btn btn-outline-primary btn-document">
+                                                    <i class="fas fa-eye"></i> Preview
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="col-md-4">
                                 <div class="document-card">
                                     <div class="d-flex">
                                         <div class="file-icon pdf">
@@ -107,7 +138,7 @@ const Manuals = () => {
                     </div>
                 </div>
 
-                <div class="content-section">
+                {/* <div class="content-section">
                     <div class="section-header">
                         <h5 class="section-title">
                             <i class="fas fa-book"></i>
@@ -179,7 +210,7 @@ const Manuals = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
         </Fragment >
     )

@@ -4,7 +4,7 @@ import FacilityList from '../../../components/FacilityList'
 const MasterFacilityList = () => {
     return (
         <div className='container'>
-            <FacilityList url='admin/mfl' />
+            <FacilityList url='admin/mfl' link='mfl' />
         </div>
     )
 }

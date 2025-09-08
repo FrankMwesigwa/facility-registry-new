@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-const Search = ({ onFilterChange, filterValue }) => {
+const Search = ({ onFilterChange, filterValue, clearSignal }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
     const [searchQuery, setSearchQuery] = useState(filterValue || "")
@@ -39,6 +39,14 @@ const Search = ({ onFilterChange, filterValue }) => {
         onFilterChange("")
         setError(null)
     }
+
+    // Clear from parent when clearSignal changes
+    useEffect(() => {
+        if (clearSignal > 0) {
+            setSearchQuery("")
+            setError(null)
+        }
+    }, [clearSignal])
 
     return (
         <div className="search-container">

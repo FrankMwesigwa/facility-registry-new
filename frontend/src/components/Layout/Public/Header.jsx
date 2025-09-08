@@ -68,9 +68,9 @@ const Header = () => {
                             <Link className="nav-link" to="/">Home</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/facilities">MFL</Link>
+                            <Link className="nav-link" to="/facilities">Master Facility List</Link>
                         </li>
-                        <li className="nav-item dropdown">
+                        {/* <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 Downloads
                             </a>
@@ -78,7 +78,7 @@ const Header = () => {
                                 <li><a className="dropdown-item" href="#">Facility List</a></li>
                                 <li><a className="dropdown-item" href="#">Reports</a></li>
                             </ul>
-                        </li>
+                        </li> */}
                         <li className="nav-item">
                             <Link className="nav-link" to="/manuals">SOPs & Manuals</Link>
                         </li>

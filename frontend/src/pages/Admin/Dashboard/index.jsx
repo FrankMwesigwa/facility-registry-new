@@ -1,7 +1,32 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import './styles.css'
+import API from '../../../helpers/api'
 
 const Dashboard = () => {
+  const [stats, setStats] = useState({
+    totalFacilities: 0,
+    government: 0,
+    pnfp: 0,
+    private: 0,
+    functional: 0,
+    nonFunctional: 0,
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const { data } = await API.get('/mfl/stats')
+        setStats(data)
+      } catch (e) {
+        // fail silently on dashboard
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchStats()
+  }, [])
+
   return (
     <Fragment>
       <div className="container dashboard-container">
@@ -10,9 +35,9 @@ const Dashboard = () => {
             <h2 className="mb-1" style={{ color: 'var(--primary-color)', fontWeight: '700' }}>Admin Dashboard</h2>
             <p className="text-muted mb-0">Overview of health facility registry system</p>
           </div>
-          <div>
+          {/* <div>
             <span className="badge bg-success">System Online</span>
-          </div>
+          </div> */}
         </div>
 
         <div className="row mb-4">
@@ -21,7 +46,7 @@ const Dashboard = () => {
               <div className="stat-icon" style={{ backgroundColor: '#dc3545' }}>
                 <i className="fas fa-building"></i>
               </div>
-              <div className="stat-number">6,680</div>
+              <div className="stat-number">{loading ? '—' : stats.totalFacilities.toLocaleString()}</div>
               <div className="stat-label">Total Facilities</div>
             </div>
           </div>
@@ -30,7 +55,7 @@ const Dashboard = () => {
               <div className="stat-icon" style={{ backgroundColor: '#0d6efd' }}>
                 <i className="fas fa-university"></i>
               </div>
-              <div className="stat-number">3,442</div>
+              <div className="stat-number">{loading ? '—' : stats.government.toLocaleString()}</div>
               <div className="stat-label">Government</div>
             </div>
           </div>
@@ -39,7 +64,7 @@ const Dashboard = () => {
               <div className="stat-icon" style={{ backgroundColor: '#fd7e14' }}>
                 <i className="fas fa-heart"></i>
               </div>
-              <div className="stat-number">975</div>
+              <div className="stat-number">{loading ? '—' : stats.pnfp.toLocaleString()}</div>
               <div className="stat-label">PNFP</div>
             </div>
           </div>
@@ -48,7 +73,7 @@ const Dashboard = () => {
               <div className="stat-icon" style={{ backgroundColor: '#198754' }}>
                 <i className="fas fa-briefcase"></i>
               </div>
-              <div className="stat-number">2,263</div>
+              <div className="stat-number">{loading ? '—' : stats.private.toLocaleString()}</div>
               <div className="stat-label">Private</div>
             </div>
           </div>
@@ -57,23 +82,23 @@ const Dashboard = () => {
               <div className="stat-icon" style={{ backgroundColor: '#20c997' }}>
                 <i className="fas fa-check-circle"></i>
               </div>
-              <div className="stat-number">6,425</div>
+              <div className="stat-number">{loading ? '—' : stats.functional.toLocaleString()}</div>
               <div className="stat-label">Functional</div>
             </div>
           </div>
           <div className="col-md-2">
             <div className="stat-card">
-              <div className="stat-icon" style={{ backgroundColor: '#6f42c1' }}>
-                <i className="fas fa-user-check"></i>
+              <div className="stat-icon" style={{ backgroundColor: '#6c757d' }}>
+                <i className="fas fa-times-circle"></i>
               </div>
-              <div className="stat-number">1,247</div>
-              <div className="stat-label">Active Users</div>
+              <div className="stat-number">{loading ? '—' : stats.nonFunctional.toLocaleString()}</div>
+              <div className="stat-label">Non-Functional</div>
             </div>
           </div>
         </div>
 
         <div className="row">
-          <div className="col-md-8">
+          <div className="col-md-12">
             <div className="dashboard-card">
               <div className="card-header">
                 <h5 className="card-title">
@@ -136,7 +161,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="col-md-4">
+          {/* <div className="col-md-4">
             <div className="dashboard-card">
               <div className="card-header">
                 <h5 className="card-title">
@@ -178,7 +203,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </Fragment>

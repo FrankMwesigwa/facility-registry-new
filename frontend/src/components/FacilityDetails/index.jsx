@@ -49,7 +49,7 @@ const FacilityDetails = ({url}) => {
                     <div class="row align-items-center">
                         <div class="col-md-8">
                             <h1 class="facility-title">{facility.name}</h1>
-                            <div class="facility-code">Full Facility Code: {facility.unique_identifier}</div>
+                            <div class="facility-code">Full Facility Code: {facility.nhfrid}</div>
                             <div class="facility-badges">
                                 <span class="badge bg-primary">{facility.level}</span>
                                 <span class="badge bg-success">Functional</span>
@@ -72,12 +72,16 @@ const FacilityDetails = ({url}) => {
                             </div>
                             <div class="section-body">
                                 <div class="info-item">
-                                    <span class="info-label">Facility Name</span>
-                                    <span class="info-value">{facility.name}</span>
+                                    <span class="info-label">Short Name</span>
+                                    <span class="info-value">{facility.shortname}</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="info-label">Facility Code</span>
-                                    <span class="info-value">{facility.unique_identifier}</span>
+                                    <span class="info-value">{facility.nhfrid}</span>
+                                </div>
+                                 <div class="info-item">
+                                    <span class="info-label">DHIS2 Code</span>
+                                    <span class="info-value">{facility.uid}</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="info-label">Level</span>
@@ -93,10 +97,6 @@ const FacilityDetails = ({url}) => {
                                         <span class="badge bg-success">Functional</span>
                                     </span>
                                 </div>
-                                <div class="info-item">
-                                    <span class="info-label">Date Established</span>
-                                    <span class="info-value">January 15, 2020</span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -111,6 +111,10 @@ const FacilityDetails = ({url}) => {
                             </div>
                             <div class="section-body">
                                 <div class="info-item">
+                                    <span class="info-label">Region</span>
+                                    <span class="info-value">{facility.Region?.name}</span>
+                                </div>
+                                <div class="info-item">
                                     <span class="info-label">District</span>
                                     <span class="info-value">{facility.District?.name}</span>
                                 </div>
@@ -119,27 +123,23 @@ const FacilityDetails = ({url}) => {
                                     <span class="info-value">{facility.SubCounty?.name}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label">Parish</span>
-                                    <span class="info-value">Nakawa Central</span>
+                                    <span class="info-label">Address</span>
+                                    <span class="info-value">{facility.address}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label">Village</span>
-                                    <span class="info-value">Nakawa Trading Center</span>
+                                    <span class="info-label">Longtitude</span>
+                                    <span class="info-value">{facility.longtitude}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label">Physical Address</span>
-                                    <span class="info-value">Plot 45, Nakawa Road</span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="info-label">GPS Coordinates</span>
-                                    <span class="info-value">0.3476° N, 32.6204° E</span>
+                                    <span class="info-label">Latitude</span>
+                                    <span class="info-value">{facility.latitude}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
+                {/* <div class="row">
                     <div class="col-md-6">
                         <div class="content-section">
                             <div class="section-header">
@@ -205,7 +205,7 @@ const FacilityDetails = ({url}) => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 <div class="content-section">
                     <div class="section-header">

@@ -5,6 +5,8 @@ import User from '../models/users.js';
 import Mfl from '../models/mfl.js';
 import generateFacilityIdentifier from "../utils/generateIdentifier.js";
 import { pool, sequelize, Sequelize } from '../config/db.js';
+import System from '../models/system.js';
+import WebhookService from './webhookService.js';
 
 /**
  * Service class for handling facility request operations
@@ -481,7 +483,26 @@ class FacilityRequestService {
                     owner_id: request.requested_by || existingMfl.owner_id || null,
                 }, { transaction });
 
-                return { facilityAdminUnit: { id: request.facility_id }, nhfrid: existingMfl.nhfrid };
+                const result = { facilityAdminUnit: { id: request.facility_id }, nhfrid: existingMfl.nhfrid };
+                // Broadcast facility.updated
+                const systems = await System.findAll({ where: { is_active: true }, transaction });
+                try {
+                    await WebhookService.broadcast(systems, 'facility.updated', {
+                        facility_id: request.facility_id,
+                        nhfrid: existingMfl.nhfrid,
+                        name: request.name,
+                        level: request.level,
+                        ownership: request.ownership,
+                        authority: request.authority,
+                        district_id: request.district_id,
+                        region_id: request.region_id,
+                        subcounty_id: request.subcounty_id,
+                        timestamp: new Date().toISOString(),
+                    });
+                } catch (e) {
+                    console.error('Webhook broadcast (update) failed:', e.message);
+                }
+                return result;
             }
 
             // If no existing MFL record, do not create a new one for updates; just proceed
@@ -502,7 +523,7 @@ class FacilityRequestService {
             Math.floor(Math.random() * 10000)
         );
 
-        await Mfl.create({
+        const createdMfl = await Mfl.create({
             name: request.name,
             shortname: request.name,
             longtitude: request.longitude,
@@ -533,6 +554,25 @@ class FacilityRequestService {
             user_district_id: request.user_district_id || null,
             owner_id: request.requested_by || null,
         }, { transaction });
+
+        // Broadcast facility.created
+        const systems = await System.findAll({ where: { is_active: true }, transaction });
+        try {
+            await WebhookService.broadcast(systems, 'facility.created', {
+                facility_id: facilityAdminUnit.id,
+                nhfrid,
+                name: request.name,
+                level: request.level,
+                ownership: request.ownership,
+                authority: request.authority,
+                district_id: request.district_id,
+                region_id: request.region_id,
+                subcounty_id: request.subcounty_id,
+                timestamp: new Date().toISOString(),
+            });
+        } catch (e) {
+            console.error('Webhook broadcast (create) failed:', e.message);
+        }
 
         return { facilityAdminUnit, nhfrid };
     }
@@ -621,6 +661,18 @@ class FacilityRequestService {
             }, { transaction });
 
             await transaction.commit();
+            // Broadcast facility.deactivated after commit
+            try {
+                const systems = await System.findAll({ where: { is_active: true } });
+                await WebhookService.broadcast(systems, 'facility.deactivated', {
+                    facility_id: request.facility_id,
+                    name: request.name,
+                    reason: comments || deactivationData?.deactivation_reason || null,
+                    timestamp: new Date().toISOString(),
+                });
+            } catch (e) {
+                console.error('Webhook broadcast (deactivate) failed:', e.message);
+            }
             committed = true;
         } catch (error) {
             if (!committed) {

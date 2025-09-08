@@ -1,0 +1,9 @@
+.badge-list {
+  display: inline-block;
+}
+
+
+/* Add space between navbar and services container */
+.services-spaced {
+  margin-top: 1.5rem;
+}

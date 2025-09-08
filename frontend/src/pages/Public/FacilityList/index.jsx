@@ -4,7 +4,7 @@ import FacilityList from '../../../components/FacilityList'
 const Facility = () => {
     return (
         <div className='container'>
-            <FacilityList url='facility' />
+            <FacilityList url='facility' link='mfl' />
         </div>
     )
 }

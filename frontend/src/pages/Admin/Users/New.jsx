@@ -39,18 +39,8 @@ const AddUser = () => {
   }
 
   return (
-    <div className="container mt-5">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <h2 className="mb-1" style={{ color: 'var(--primary-color)', fontWeight: '700', fontSize: '1.5rem' }}>Add User</h2>
-          <p className="text-muted mb-0" style={{ fontSize: '0.9rem' }}>Create a new registry user</p>
-        </div>
-        <div>
-          <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => history.push('/admin/users')}>
-            <i className="fas fa-arrow-left"></i> Back to Users
-          </button>
-        </div>
-      </div>
+    <div className="container mt-5 pt-4">
+     
 
       {error && (
         <div className="alert alert-danger" role="alert">
@@ -61,6 +51,17 @@ const AddUser = () => {
       <form onSubmit={onSubmit}>
         <div className="row justify-content-center">
           <div className="col-12 col-lg-10">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 className="mb-1" style={{ color: 'var(--primary-color)', fontWeight: '700', fontSize: '1.5rem' }}>Add New User</h2>
+          <p className="text-muted mb-0" style={{ fontSize: '0.9rem' }}>Create a new registry user</p>
+        </div>
+        <div>
+          <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => history.push('/admin/users')}>
+            <i className="fas fa-arrow-left"></i> Back to Users
+          </button>
+        </div>
+      </div>
             <div className="form-card">
           <div className="card-header">
             <h5 className="card-title">

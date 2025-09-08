@@ -1,0 +1,73 @@
+/* Systems page styles aligned with Users page */
+.users-container {
+  padding: 1rem;
+}
+
+.content-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.5rem;
+}
+
+.content-card .card-body {
+  padding: 1rem;
+}
+
+.facilities-table {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.facilities-table th {
+  background-color: #f8f9fa;
+  border-top: none;
+  font-weight: 600;
+  color: var(--primary-color);
+  padding: 0.6rem 0.5rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.facilities-table td {
+  padding: 0.6rem 0.5rem;
+  vertical-align: middle;
+  border-color: #f1f3f4;
+  font-size: 0.85rem;
+}
+
+.facilities-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.facility-name {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.15rem;
+  font-size: 0.9rem;
+}
+
+.status-badge {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  font-weight: 500;
+}
+
+.action-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  margin: 0 0.1rem;
+}
+
+/* Empty state styling */
+.card.border-0.bg-light {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.card.border-0.bg-light .card-body {
+  padding: 2rem;
+}
+

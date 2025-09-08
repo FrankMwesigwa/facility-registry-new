@@ -4,7 +4,7 @@ const FacilityDetail = () => {
 
     return (
         <div className='container'>
-            <FacilityDetails url='/admin/mfl' />
+            <FacilityDetails url='admin/mfl' />
         </div>
     )
 }

@@ -27,8 +27,10 @@ import Units from './routes/units.js';
 import apiRoutes from './routes/index.js';
 import AdminUnits from './routes/adminunits.js'
 import HealthService from './routes/healthservice.js';
-// import StatusTrackling from './routes/statustrackling.js'
 import FacilityRequests from './routes/facilityRequests.js'
+import Systems from './routes/systems.js'
+import Mfl from './routes/mfl.js'
+import TestWebhook from './routes/testwebhook.js'
 
 app.use(cors());
 app.use(express.json());
@@ -50,8 +52,10 @@ app.use("/api/units", Units);
 app.use("/api/levels", Levels);
 app.use("/api/adminunits", AdminUnits);
 app.use("/api/services", HealthService);
-// app.use("/api/trackling", StatusTrackling);
 app.use("/api/facilityrequests", FacilityRequests);
+app.use("/api/systems", Systems);
+app.use("/api/mfl", Mfl);
+app.use("/api/test", TestWebhook);
 
 app.listen(process.env.PORT, async () => {
   console.log(`🚀Server started Successfully on port ${process.env.PORT} in ${process.env.NODE_ENV}`);

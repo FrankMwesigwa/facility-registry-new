@@ -226,7 +226,7 @@ const AdminLevels = () => {
     }
 
     return (
-        <div className="container-fluid">
+        <div className="container mt-5">
             <div id="levels-section" className="content-section" style={{ marginTop: '2rem' }}>
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <div>

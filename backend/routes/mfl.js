@@ -1,8 +1,79 @@
-import express from "express";
+import express from 'express';
+import crypto from 'crypto';
+import System from '../models/system.js';
 import authenticate from "../middleware/auth.js";
 import MflService from "../services/mflService.js";
 
 const router = express.Router();
+
+// POST /api/mfl/updates/webhook
+router.post('/updates/webhook', async (req, res) => {
+    try {
+        const apiKey = req.header('X-API-KEY') || '';
+        const signature = req.header('X-Signature') || '';
+        const algo = req.header('X-Signature-Alg') || 'HMAC-SHA256';
+
+        if (!apiKey) return res.status(401).json({ ok: false, error: 'Missing X-API-KEY' });
+        if (!signature) return res.status(401).json({ ok: false, error: 'Missing X-Signature' });
+        if (algo !== 'HMAC-SHA256') return res.status(400).json({ ok: false, error: 'Unsupported signature algorithm' });
+
+        // Find system by API key
+        const system = await System.findOne({ where: { api_key: apiKey, is_active: true } });
+        if (!system) return res.status(403).json({ ok: false, error: 'Invalid or inactive API key' });
+
+        // Recompute HMAC over the raw body. If raw body isn't available, use JSON re-serialized body.
+        const bodyString = JSON.stringify(req.body || {});
+        const expected = crypto.createHmac('sha256', system.secret).update(bodyString).digest('hex');
+
+        const verified = crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+        if (!verified) return res.status(401).json({ ok: false, error: 'Invalid signature' });
+
+        // Handle supported events
+        const eventName = req.body?.event;
+        switch (eventName) {
+            case 'facility.created':
+            case 'facility.updated':
+            case 'facility.deleted':
+                // For now, acknowledge receipt. Integrate domain handling as needed.
+                return res.json({ ok: true, receivedAt: new Date().toISOString() });
+            default:
+                return res.status(400).json({ ok: false, error: 'Unsupported event' });
+        }
+    } catch (err) {
+        return res.status(500).json({ ok: false, error: err.message });
+    }
+});
+
+// Stats
+router.get("/stats", async (req, res) => {
+    try {
+        const stats = await MflService.getStats();
+        res.status(200).json(stats);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Summary by level and ownership
+router.get("/summary/level-ownership", async (req, res) => {
+    try {
+        const rows = await MflService.getLevelOwnershipSummary();
+        res.status(200).json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Upload from nhfr.facilityuploads into nhfr.mfl
+router.post("/upload", authenticate, async (req, res) => {
+    try {
+        const ownerId = parseInt(req.user.id);
+        const result = await MflService.uploadFromFacilityUploads(ownerId);
+        res.status(200).json({ message: "Upload completed", ...result });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 // Query: by owner_id of logged-in user
 router.get("/owner", authenticate, async (req, res) => {
@@ -43,19 +114,24 @@ router.post("/", authenticate, async (req, res) => {
 // List
 router.get("/", async (req, res) => {
     try {
+        // If export=all is provided, return all facilities matching filters without pagination
+        if (req.query.export === 'all') {
+            const rows = await MflService.findAllForExport(req.query);
+            return res.status(200).json({ results: rows.length, facilities: rows });
+        }
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 50;
-        const data = await MflService.findAll(page, limit);
-        res.status(200).json({ results: data.length, facilities: data });
+        const { rows, count } = await MflService.findAll(page, limit, req.query);
+        res.status(200).json({ results: count, facilities: rows });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// Get by facility_id
-router.get("/:facility_id", async (req, res) => {
+// Get facility details by flexible identifier (id, facility_id, nhfrid, uid)
+router.get("/:identifier", async (req, res) => {
     try {
-        const item = await MflService.findById(req.params.facility_id);
+        const item = await MflService.findDetails(req.params.identifier);
         if (!item) return res.status(404).json({ message: "Not found" });
         res.status(200).json(item);
     } catch (error) {

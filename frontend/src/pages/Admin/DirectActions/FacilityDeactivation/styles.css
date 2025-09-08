@@ -1,0 +1,201 @@
+/* Form card */
+.form-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+    margin-bottom: 1.5rem;
+}
+
+.form-card .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #e9ecef;
+    padding: 0.8rem 1.2rem;
+}
+
+.form-card .card-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.form-card .card-title i {
+    margin-right: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.form-card .card-body {
+    padding: 1.2rem;
+}
+
+/* Form styling */
+.form-label {
+    font-weight: 500;
+    color: var(--primary-color);
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+}
+
+.form-control,
+.form-select {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+}
+
+.required {
+    color: #dc3545;
+}
+
+/* React Select styling */
+.react-select__control {
+    font-size: 0.85rem;
+    min-height: 38px;
+    border: 1px solid #ced4da;
+}
+
+.react-select__control:hover {
+    border-color: #adb5bd;
+}
+
+.react-select__control--is-focused {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+}
+
+.react-select__placeholder {
+    color: #6c757d;
+}
+
+.react-select__single-value {
+    color: #495057;
+}
+
+.react-select__option {
+    font-size: 0.85rem;
+}
+
+.react-select__option--is-focused {
+    background-color: rgba(44, 90, 160, 0.1);
+}
+
+.react-select__option--is-selected {
+    background-color: var(--primary-color);
+}
+
+/* Form navigation buttons styling */
+.form-navigation {
+    background: white;
+    border: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Loading states */
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* File upload styling */
+.form-control[type="file"] {
+    padding: 0.5rem;
+    border: 2px dashed #ced4da;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.form-control[type="file"]:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(44, 90, 160, 0.05);
+}
+
+.form-control[type="file"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+    background-color: rgba(44, 90, 160, 0.05);
+}
+
+.file-selected {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: #28a745;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    margin-top: 0.5rem;
+}
+
+.file-selected i {
+    color: #28a745;
+    margin-right: 0.5rem;
+}
+
+/* Modal styling for confirmation */
+.facility-info {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 1rem;
+}
+
+.facility-info h6 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.facility-info p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.facility-info p:last-child {
+    margin-bottom: 0;
+}
+
+/* Alert styling */
+.alert-warning {
+    border-color: #ffeaa7;
+    background-color: #fff9e6;
+    color: #856404;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .form-card .card-body {
+        padding: 1rem;
+    }
+    
+    .form-navigation {
+        padding: 1rem;
+    }
+    
+    .form-navigation .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-navigation .btn:last-child {
+        margin-bottom: 0;
+    }
+    
+    .modal-dialog {
+        margin: 1rem;
+    }
+    
+    .facility-info {
+        padding: 0.75rem;
+    }
+}

@@ -164,13 +164,10 @@ SELECT
   f.authority,
   f.status,
   f.report,
-  -- matched hierarchy IDs/names
   h.facility_id,
   h.subcounty_id,
   h.district_id,
-  h.region_id,
-  -- helpful flags
-  (h.facility_id IS NOT NULL) AS matched_exact_chain
+  h.region_id
 FROM nhfr.facilityuploads f
 LEFT JOIN nhfr.facility_hierarchy h
   ON lower(btrim(f.shortname))  = lower(btrim(h.facility))

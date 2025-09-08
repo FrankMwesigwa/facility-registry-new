@@ -65,6 +65,59 @@
     font-size: 1rem;
 }
 
+/* Dropdown styles for sub-navbar */
+.sub-navbar .dropdown {
+    position: relative;
+}
+
+/* Remove pseudo-caret to avoid version issues; use explicit icon instead */
+.sub-navbar .dropdown-toggle::after { content: none; }
+
+.sub-navbar .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+    min-width: 240px;
+    border-radius: 6px;
+    padding: 0.5rem 0;
+    display: none;
+    z-index: 1030;
+}
+
+.sub-navbar .dropdown:hover .dropdown-menu,
+.sub-navbar .dropdown:focus-within .dropdown-menu {
+    display: block;
+}
+
+.sub-navbar .dropdown-item {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.sub-navbar .dropdown-item:hover,
+.sub-navbar .dropdown-item.active {
+    background-color: rgba(44, 90, 160, 0.08);
+    color: var(--primary-color);
+}
+
+/* Caret icon behavior */
+.sub-navbar .caret-icon {
+    margin-left: 0.5rem;
+    transition: transform 0.2s ease;
+    font-size: 0.8rem;
+}
+
+.sub-navbar .dropdown:hover .caret-icon,
+.sub-navbar .dropdown:focus-within .caret-icon {
+    transform: rotate(180deg);
+}
+
 /* Main content spacing for all admin pages */
 .dashboard-container,
 .admin-units-container,

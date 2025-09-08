@@ -8,6 +8,7 @@ const Filters = ({ close, onApplyFilters }) => {
         level: null,
         ownership: null,
         authority: null,
+        status: null,
         region_id: null,
         district_id: null,
         sub_county_id: null,
@@ -42,7 +43,7 @@ const Filters = ({ close, onApplyFilters }) => {
     const fetchRegions = async () => {
         try {
             console.log('Fetching regions...');
-            const response = await API.get('/adminareas/regions');
+            const response = await API.get('/adminunits/regions');
             console.log('Regions response:', response);
             const formattedRegions = response.data.map(region => ({
                 value: region.id,
@@ -62,7 +63,7 @@ const Filters = ({ close, onApplyFilters }) => {
     const fetchDistricts = async (regionId) => {
         try {
             console.log(`Fetching districts for region ${regionId}...`);
-            const response = await API.get(`/adminareas/district?region_id=${regionId}`);
+            const response = await API.get(`/adminunits/districts?id=${regionId}`);
             console.log('Districts response:', response);
             const formattedDistricts = response.data.map(district => ({
                 value: district.id,
@@ -82,7 +83,7 @@ const Filters = ({ close, onApplyFilters }) => {
     const fetchSubCounties = async (districtId) => {
         try {
             console.log(`Fetching sub-counties for district ${districtId}...`);
-            const response = await API.get(`/adminareas/subcounty?district_id=${districtId}`);
+            const response = await API.get(`/adminunits/subcounties?id=${districtId}`);
             console.log('Sub-counties response:', response);
             const formattedSubCounties = response.data.map(subCounty => ({
                 value: subCounty.id,
@@ -108,6 +109,7 @@ const Filters = ({ close, onApplyFilters }) => {
             level: null,
             ownership: null,
             authority: null,
+            status: null,
             region_id: null,
             district_id: null,
             sub_county_id: null,
@@ -155,6 +157,21 @@ const Filters = ({ close, onApplyFilters }) => {
                                     isClearable
                                     classNamePrefix="react-select"
                                     placeholder="Select facility level..."
+                                />
+                            </div>
+
+                            <div className="filter-group">
+                                <label className="filter-label">Status</label>
+                                <Select
+                                    value={filters.status}
+                                    options={[
+                                        { value: "Functional", label: "Functional" },
+                                        { value: "Non-Functional", label: "Non-Functional" },
+                                    ]}
+                                    onChange={(selected) => handleFilterChange(selected, "status")}
+                                    isClearable
+                                    classNamePrefix="react-select"
+                                    placeholder="Select status..."
                                 />
                             </div>
 
