@@ -22,7 +22,7 @@ import FacilityAddition from '../pages/Admin/DirectActions/FacilityAddition'
 import FacilityDeactivation from '../pages/Admin/DirectActions/FacilityDeactivation';
 
 const ProtectedAdminRoute = ({ component: Component, ...rest }) => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const isAuthenticated = localStorage.getItem('token')
 
     return (
         <Route

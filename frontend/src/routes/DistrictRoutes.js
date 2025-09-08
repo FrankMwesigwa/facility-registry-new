@@ -13,7 +13,7 @@ import FacilityUpdate from '../pages/District/FacilityUpdate';
 import FacilityDeactivation from '../components/Requests/FacilityDeactivation';
 
 const District = ({ component: Component, ...rest }) => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const isAuthenticated = localStorage.getItem('token')
 
     return (
         <Route

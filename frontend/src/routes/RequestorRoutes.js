@@ -11,7 +11,7 @@ import FacilityAddition from '../pages/Requestor/FacilityAddition';
 import FacilityDeactivation from '../components/Requests/FacilityDeactivation';
 
 const Requestor = ({ component: Component, ...rest }) => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const isAuthenticated = localStorage.getItem('token')
 
     return (
         <Route

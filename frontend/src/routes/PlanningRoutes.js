@@ -8,7 +8,7 @@ import RequestDetails from '../pages/Planning/RequestDetails';
 import FacilityDetails from '../pages/Planning/FacilityDetails';
 
 const Planning = ({ component: Component, ...rest }) => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const isAuthenticated = localStorage.getItem('token')
 
     return (
         <Route
