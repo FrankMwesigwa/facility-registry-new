@@ -96,6 +96,21 @@ router.post("/upload", authenticate, upload.single('file'), async (req, res) => 
     }
 });
 
+// Incremental upload using JSON chunks: { rows: Array<Record<string, any>> }
+router.post("/upload/chunk", authenticate, async (req, res) => {
+    try {
+        const ownerId = parseInt(req.user.id);
+        const rows = Array.isArray(req.body?.rows) ? req.body.rows : [];
+        if (rows.length === 0) {
+            return res.status(400).json({ error: 'rows array is required' });
+        }
+        const result = await MflService.uploadFromCsv(rows, ownerId);
+        res.status(200).json({ message: "Chunk processed", ...result });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Query: by owner_id of logged-in user
 router.get("/owner", authenticate, async (req, res) => {
     try {

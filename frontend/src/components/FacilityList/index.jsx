@@ -160,17 +160,35 @@ const FacilityList = ({ url, link, showUpload = false }) => {
     const onFileChange = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
+        const lower = (file.name || '').toLowerCase();
+        if (!lower.endsWith('.xlsx') && !lower.endsWith('.xls')) {
+            setUploadMsg('Please select an Excel file (.xlsx or .xls)');
+            if (fileRef.current) fileRef.current.value = '';
+            return;
+        }
         setUploadMsg("");
         setUploading(true);
         try {
-            const form = new FormData();
-            form.append('file', file);
+            // Parse CSV/Excel in browser and send chunks as JSON
+            const arrayBuffer = await file.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const allRows = XLSX.utils.sheet_to_json(sheet, { defval: null });
+
             const token = localStorage.getItem('token');
-            const { data } = await API.post('/mfl/upload', form, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setUploadMsg(`Upload completed: inserted ${data.inserted}, updated ${data.updated}`);
-            // Refresh first page after upload
+            const chunkSize = 1000;
+            let totalInserted = 0;
+            let totalUpdated = 0;
+            for (let i = 0; i < allRows.length; i += chunkSize) {
+                const chunk = allRows.slice(i, i + chunkSize);
+                const { data } = await API.post('/mfl/upload/chunk', { rows: chunk }, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                totalInserted += data.inserted || 0;
+                totalUpdated += data.updated || 0;
+            }
+            setUploadMsg(`Upload completed: inserted ${totalInserted}, updated ${totalUpdated}`);
             await fetchData(1);
             setPagination(prev => ({ ...prev, currentPage: 1 }));
         } catch (err) {
@@ -236,7 +254,7 @@ const FacilityList = ({ url, link, showUpload = false }) => {
                             <div class="export-buttons d-flex align-items-center">
                                 {showUpload && (
                                     <>
-                                        <input type="file" ref={fileRef} accept=".csv" onChange={onFileChange} style={{ display: 'none' }} />
+                                        <input type="file" ref={fileRef} accept=".xlsx,.xls" onChange={onFileChange} style={{ display: 'none' }} />
                                         <button class="btn btn-primary btn-sm me-2" onClick={onClickUpload} disabled={uploading}>
                                             {uploading ? (
                                                 <>
