@@ -14,17 +14,12 @@ const router = express.Router();
 router.post('/register/public', async (req, res) => {
     try {
         const validatedData = validateUserRegistration(req.body);
-        const { user, verificationCode } = await AuthService.registerPublicUser(validatedData);
-        
-        await EmailService.sendVerificationEmail(
-            user.email, 
-            user.firstname, 
-            user.lastname, 
-            verificationCode
-        );
-        
+        const { token, user } = await AuthService.registerPublicUser(validatedData);
+
         res.status(200).json({ 
-            message: 'Registration successful. Please check your email for the verification code.' 
+            message: 'Registration successful',
+            token,
+            user
         });
     } catch (error) {
         console.error('Registration error:', error);

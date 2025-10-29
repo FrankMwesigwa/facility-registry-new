@@ -516,12 +516,7 @@ class FacilityRequestService {
             level_id: 5
         }, { transaction });
 
-        const nhfrid = generateFacilityIdentifier(
-            request.region_id,
-            request.district_id,
-            request.subcounty_id,
-            Math.floor(Math.random() * 10000)
-        );
+        const nhfrid = generateFacilityIdentifier();
 
         const createdMfl = await Mfl.create({
             name: request.name,

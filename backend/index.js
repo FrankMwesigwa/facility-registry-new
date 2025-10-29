@@ -31,6 +31,7 @@ import FacilityRequests from './routes/facilityRequests.js'
 import Systems from './routes/systems.js'
 import Mfl from './routes/mfl.js'
 import TestWebhook from './routes/testwebhook.js'
+import FacilityIDs from './routes/facilityid.js'
 
 app.use(cors());
 app.use(express.json());
@@ -56,6 +57,7 @@ app.use("/api/facilityrequests", FacilityRequests);
 app.use("/api/systems", Systems);
 app.use("/api/mfl", Mfl);
 app.use("/api/test", TestWebhook);
+app.use("/api/ids", FacilityIDs);
 
 app.listen(process.env.PORT, async () => {
   console.log(`🚀Server started Successfully on port ${process.env.PORT} in ${process.env.NODE_ENV}`);

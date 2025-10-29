@@ -23,8 +23,10 @@ class AuthService {
     }
 
     async registerPublicUser(userData) {
-        const { user, verificationCode } = await UserService.createPublicUser(userData);
-        return { user, verificationCode };
+        const { user } = await UserService.createPublicUser(userData);
+        const token = UserService.generateToken(user);
+        const userDataResponse = UserService.getUserResponseData(user);
+        return { token, user: userDataResponse };
     }
 
     async registerUser(userData) {

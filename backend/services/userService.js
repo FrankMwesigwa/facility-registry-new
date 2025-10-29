@@ -41,11 +41,6 @@ class UserService {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        
-        // Generate 6-digit verification code
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-        // Set expiration to 10 minutes from now
-        const verificationCodeExpires = new Date(Date.now() + 10 * 60 * 1000);
 
         const user = await User.create({
             email,
@@ -54,15 +49,15 @@ class UserService {
             firstname,
             lastname,
             role: 'public',
-            is_verified: false,
+            is_verified: true,
             district_id,
             organisation,
             password: hashedPassword,
-            verification_code: verificationCode,
-            verification_code_expires: verificationCodeExpires
+            verification_code: null,
+            verification_code_expires: null
         });
 
-        return { user, verificationCode };
+        return { user };
     }
 
     async findByEmail(email) {

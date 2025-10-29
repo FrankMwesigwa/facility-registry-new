@@ -5,6 +5,10 @@ import { sequelize, QueryTypes } from "../config/db.js";
 import { Op } from "sequelize";
 
 class MflService {
+    static async generateNumericSeed() {
+        // Generates a numeric seed suitable for generateFacilityIdentifier (0..9,999,999)
+        return Math.floor(Math.random() * 10000000);
+    }
     static async create(data) {
         return await Mfl.create(data);
     }
