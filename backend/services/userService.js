@@ -34,12 +34,6 @@ class UserService {
     async createPublicUser(userData) {
         const { email, password, firstname, lastname, phoneno, username, organisation, district_id } = userData;
         
-        // Check if user already exists
-        const existingUser = await User.findOne({ where: { email } });
-        if (existingUser) {
-            throw new Error('Email already registered');
-        }
-
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await User.create({

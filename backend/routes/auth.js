@@ -13,8 +13,7 @@ const router = express.Router();
  */
 router.post('/register/public', async (req, res) => {
     try {
-        const validatedData = validateUserRegistration(req.body);
-        const { token, user } = await AuthService.registerPublicUser(validatedData);
+        const { token, user } = await AuthService.registerPublicUser(req.body);
 
         res.status(200).json({ 
             message: 'Registration successful',
@@ -23,7 +22,10 @@ router.post('/register/public', async (req, res) => {
         });
     } catch (error) {
         console.error('Registration error:', error);
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ 
+            message: error.message || 'Registration failed',
+            error: error.message 
+        });
     }
 });
 

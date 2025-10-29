@@ -55,15 +55,12 @@ export const sanitizeInput = (input) => {
  * Validate user registration data
  */
 export const validateUserRegistration = (data) => {
-    const requiredFields = ['email', 'password', 'firstname', 'lastname', 'username'];
+    const requiredFields = ['email', 'password', 'firstname', 'lastname', 'username', 'phoneno', 'organisation', 'district_id'];
     validateRequired(data, requiredFields);
     
     validateEmail(data.email);
     validatePassword(data.password);
-    
-    if (data.phoneno) {
-        validatePhoneNumber(data.phoneno);
-    }
+    validatePhoneNumber(data.phoneno);
     
     return {
         email: sanitizeInput(data.email),
@@ -71,9 +68,9 @@ export const validateUserRegistration = (data) => {
         firstname: sanitizeInput(data.firstname),
         lastname: sanitizeInput(data.lastname),
         username: sanitizeInput(data.username),
-        phoneno: data.phoneno ? sanitizeInput(data.phoneno) : null,
-        organisation: data.organisation ? sanitizeInput(data.organisation) : null,
-        district_id: data.district_id || null
+        phoneno: sanitizeInput(data.phoneno),
+        organisation: sanitizeInput(data.organisation),
+        district_id: data.district_id
     };
 };
 

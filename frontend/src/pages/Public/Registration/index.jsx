@@ -59,8 +59,15 @@ const Registration = () => {
         setLoading(true);
         try {
             const response = await API.post('/auth/register/public', formData);
-            toast.success(response.data.message || 'Registration successful! Please check your email for verification code.', { position: "top-center" });
-            history.push('/verify', { email: formData.email });
+            
+            // Store the token and user data
+            if (response.data.token) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+            }
+            
+            toast.success(response.data.message || 'Registration successful!', { position: "top-center" });
+            history.push('/requests');
         } catch (error) {
             toast.error(error.response?.data.message || 'Error registering user', { position: "top-center" });
         } finally {
