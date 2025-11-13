@@ -83,19 +83,7 @@ const FacilityRequests = sequelize.define("FacilityRequests",
             type: DataTypes.STRING,
             allowNull: true,
         },
-        council_minutes: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
         district_letter: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        request_type: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        support_document: {
             type: DataTypes.STRING,
             allowNull: true,
         },

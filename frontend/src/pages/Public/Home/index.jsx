@@ -36,7 +36,9 @@ const Home = () => {
         <div class="page-title-card">
           <h1 class="page-title">Uganda National Health Facility Registry</h1>
           <p class="page-description">
-            Welcome to the Uganda National Health Facility Registry. The Registry is a complete listing of both public and private health facilities in the country. There are <span class="highlight-number">{loading ? '—' : stats.totalFacilities.toLocaleString()}</span> health facilities and each are established under unique administrative units i.e. Region, district, health sub-district, and subcounty etc. The need to uniquely identify health facilities in the country is of paramount importance for better health service delivery.
+            Welcome to the Uganda National Health Facility Registry. 
+            The Registry is a complete listing of all HMIS reporting facilities in the country. 
+            There are <span class="highlight-number">{loading ? '—' : stats.totalFacilities.toLocaleString()}</span> health facilities and each are established under unique administrative units i.e. Region, district, health sub-district, and subcounty etc. The need to uniquely identify health facilities in the country is of paramount importance for better health service delivery.
           </p>
         </div>
       </div>

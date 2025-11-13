@@ -74,38 +74,51 @@ const AdditionRequest = () => {
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label class="form-label">Facility Level <span class="required">*</span></label>
-                                                <select class="form-select" required>
+                                               <select className="form-control" 
+                                                        name="level">
                                                     <option value="">Select Level</option>
-                                                    <option>HC I</option>
-                                                    <option>HC II</option>
-                                                    <option>HC III</option>
-                                                    <option>HC IV</option>
-                                                    <option>General Hospital</option>
-                                                    <option>National Hospital</option>
-                                                    <option>Specialized Hospital</option>
-                                                    <option>Private Clinic</option>
+                                                    <option value="HC II">HC II</option>
+                                                    <option value="HC III">HC III</option>
+                                                    <option value="HC IV">HC IV</option>
+                                                    <option value="HC IV">HC IV</option>
+                                                    <option value="Clinic">Clinic</option>
+                                                    <option value="General Hospital">General Hospital</option>
+                                                    <option value="RRH">Regional Referral Hospital</option>
+                                                    <option value="NRH">National Referral Hospital</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label class="form-label">Ownership <span class="required">*</span></label>
-                                                <select class="form-select" required>
+                                                <select className="form-control" 
+                                                        name="ownership">
                                                     <option value="">Select Ownership</option>
-                                                    <option>Government</option>
-                                                    <option>Private For Profit</option>
-                                                    <option>Private Not For Profit</option>
+                                                    <option value="PFP">Private For Private</option>
+                                                    <option value="PNFP">Private Not For Profit</option>
+                                                    <option value="GOV">Government</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label class="form-label">Operational Status <span class="required">*</span></label>
-                                                <select class="form-select" required>
-                                                    <option value="">Select Status</option>
-                                                    <option>Functional</option>
-                                                    <option>Non Functional</option>
-                                                    <option>Under Construction</option>
+                                                 <select className="form-control" 
+                                                        name="authority">
+                                                    <option value="">Select Authority</option>
+                                                    <option value="MOH">Ministry of Health</option>
+                                                    <option value="Private Authority">Private Authority</option>
+                                                    <option value="UPMB">UPMB</option>
+                                                    <option value="UCMB">UCMB</option>
+                                                    <option value="UMMB">UMMB</option>
+                                                    <option value="NGO">NGO</option>
+                                                    <option value="UPF">UPF</option>
+                                                    <option value="SOS">SOS</option>
+                                                    <option value="BOU">BOU</option>
+                                                    <option value="UCBHCA">UCBHCA</option>
+                                                    <option value="UNHCR">UNHCR</option>
+                                                    <option value="MoES">MoES</option>
+                                                    <option value="Local Government">Local Government</option>
                                                 </select>
                                             </div>
                                         </div>

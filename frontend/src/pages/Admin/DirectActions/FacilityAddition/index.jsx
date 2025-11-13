@@ -36,9 +36,7 @@ const AdditionRequest = ({url, link, role}) => {
     const [loading, setLoading] = useState(false)
     const [activeTab, setActiveTab] = useState('basic')
     const [files, setFiles] = useState({
-        support_document: null,
         operating_license: null,
-        council_minutes: null,
         district_letter: null
     })
 
@@ -308,14 +306,14 @@ const AdditionRequest = ({url, link, role}) => {
                                                         onChange={handleInputChange}
                                                         required>
                                                     <option value="">Select Level</option>
-                                                    <option value="HC I">HC I</option>
                                                     <option value="HC II">HC II</option>
                                                     <option value="HC III">HC III</option>
                                                     <option value="HC IV">HC IV</option>
+                                                    <option value="HC IV">HC IV</option>
+                                                    <option value="Clinic">Clinic</option>
                                                     <option value="General Hospital">General Hospital</option>
-                                                    <option value="National Hospital">National Hospital</option>
-                                                    <option value="Specialized Hospital">Specialized Hospital</option>
-                                                    <option value="Private Clinic">Private Clinic</option>
+                                                    <option value="RRH">Regional Referral Hospital</option>
+                                                    <option value="NRH">National Referral Hospital</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -328,24 +326,34 @@ const AdditionRequest = ({url, link, role}) => {
                                                         onChange={handleInputChange}
                                                         required>
                                                     <option value="">Select Ownership</option>
-                                                    <option value="Government">Government</option>
-                                                    <option value="Private For Profit">Private For Profit</option>
-                                                    <option value="Private Not For Profit">Private Not For Profit</option>
+                                                    <option value="PFP">Private For Private</option>
+                                                    <option value="PNFP">Private Not For Profit</option>
+                                                    <option value="GOV">Government</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div className="col-md-4">
                                             <div className="mb-3">
                                                 <label className="form-label">Authority <span className="required">*</span></label>
-                                                <select className="form-control" 
+                                                 <select className="form-control" 
                                                         name="authority"
                                                         value={formData.authority}
                                                         onChange={handleInputChange}
                                                         required>
                                                     <option value="">Select Authority</option>
-                                                    <option value="MoH">Ministry of Health</option>
-                                                    <option value="District">District</option>
-                                                    <option value="Private">Private</option>
+                                                    <option value="MOH">Ministry of Health</option>
+                                                    <option value="Private Authority">Private Authority</option>
+                                                    <option value="UPMB">UPMB</option>
+                                                    <option value="UCMB">UCMB</option>
+                                                    <option value="UMMB">UMMB</option>
+                                                    <option value="NGO">NGO</option>
+                                                    <option value="UPF">UPF</option>
+                                                    <option value="SOS">SOS</option>
+                                                    <option value="BOU">BOU</option>
+                                                    <option value="UCBHCA">UCBHCA</option>
+                                                    <option value="UNHCR">UNHCR</option>
+                                                    <option value="MoES">MoES</option>
+                                                    <option value="Local Government">Local Government</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -697,34 +705,10 @@ const AdditionRequest = ({url, link, role}) => {
                                     <div className="row">
                                         <div className="col-md-6">
                                             <div className="mb-3">
-                                                <label className="form-label">Support Document</label>
-                                                <input type="file" 
-                                                       className="form-control" 
-                                                       name="support_document"
-                                                       onChange={handleFileChange}
-                                                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
-                                                <small className="text-muted">Max 5MB</small>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="mb-3">
                                                 <label className="form-label">Operating License</label>
                                                 <input type="file" 
                                                        className="form-control" 
                                                        name="operating_license"
-                                                       onChange={handleFileChange}
-                                                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
-                                                <small className="text-muted">Max 5MB</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-md-6">
-                                            <div className="mb-3">
-                                                <label className="form-label">Council Minutes</label>
-                                                <input type="file" 
-                                                       className="form-control" 
-                                                       name="council_minutes"
                                                        onChange={handleFileChange}
                                                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
                                                 <small className="text-muted">Max 5MB</small>

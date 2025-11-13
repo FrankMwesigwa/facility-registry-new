@@ -1,7 +1,7 @@
 import React from 'react';
 
 const DocumentsSection = ({ request, openDocument }) => {
-    const hasAny = request.operating_license || request.council_minutes || request.district_letter || request.support_document;
+    const hasAny = request.operating_license || request.district_letter;
     if (!hasAny) return null;
 
     return (
@@ -29,19 +29,6 @@ const DocumentsSection = ({ request, openDocument }) => {
                                     </span>
                                 </div>
                             )}
-                            {request.council_minutes && (
-                                <div className="info-item">
-                                    <span className="info-label">Council Minutes</span>
-                                    <span className="info-value">
-                                        <button 
-                                            className="btn btn-sm btn-outline-primary"
-                                            onClick={() => openDocument(request.council_minutes)}
-                                        >
-                                            <i className="fas fa-eye"></i> View Document
-                                        </button>
-                                    </span>
-                                </div>
-                            )}
                             {request.district_letter && (
                                 <div className="info-item">
                                     <span className="info-label">District Letter</span>
@@ -49,19 +36,6 @@ const DocumentsSection = ({ request, openDocument }) => {
                                         <button 
                                             className="btn btn-sm btn-outline-primary"
                                             onClick={() => openDocument(request.district_letter)}
-                                        >
-                                            <i className="fas fa-eye"></i> View Document
-                                        </button>
-                                    </span>
-                                </div>
-                            )}
-                            {request.support_document && (
-                                <div className="info-item">
-                                    <span className="info-label">Support Document</span>
-                                    <span className="info-value">
-                                        <button 
-                                            className="btn btn-sm btn-outline-primary"
-                                            onClick={() => openDocument(request.support_document)}
                                         >
                                             <i className="fas fa-eye"></i> View Document
                                         </button>

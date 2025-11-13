@@ -14,6 +14,17 @@ import WebhookService from './webhookService.js';
 class FacilityRequestService {
     
     /**
+     * Helper function to convert empty strings to null for numeric fields
+     */
+    static sanitizeNumericField(value) {
+        if (value === '' || value === null || value === undefined) {
+            return null;
+        }
+        const numValue = parseFloat(value);
+        return isNaN(numValue) ? null : numValue;
+    }
+    
+    /**
      * Get status history for a facility request
      */
     static async getStatusHistory(requestId) {
@@ -111,8 +122,8 @@ class FacilityRequestService {
                 role: requestData.role,
                 licensed: requestData.license_status || requestData.licensed,
                 address: requestData.physical_location || requestData.address,
-                latitude: requestData.latitude,
-                longitude: requestData.longitude,
+                latitude: this.sanitizeNumericField(requestData.latitude),
+                longitude: this.sanitizeNumericField(requestData.longitude),
                 contact_personemail: requestData.contact_personemail,
                 contact_personmobile: requestData.contact_personmobile,
                 contact_personname: requestData.contact_personname,
@@ -127,9 +138,7 @@ class FacilityRequestService {
                 requested_by: userId,
                 facility_id: requestData.facility_id,
                 user_district_id: requestData.user_district_id,
-                support_document: files.find(f => f.fieldname === "support_document")?.path || null,
                 operating_license: files.find(f => f.fieldname === "operating_license")?.path || null,
-                council_minutes: files.find(f => f.fieldname === "council_minutes")?.path || null,
                 district_letter: files.find(f => f.fieldname === "district_letter")?.path || null,
             }, { transaction });
 
@@ -164,12 +173,6 @@ class FacilityRequestService {
                 throw new Error('Facility ID is required for update requests');
             }
 
-            // Ensure supporting document is provided
-            const hasSupportDocument = Array.isArray(files) && files.some(f => f.fieldname === 'support_document');
-            if (!hasSupportDocument) {
-                throw new Error('Supporting document is required for update requests');
-            }
-
             const request = await FacilityRequests.create({
                 name: updateData.name,
                 level: updateData.level,
@@ -178,8 +181,8 @@ class FacilityRequestService {
                 role: updateData.role,
                 licensed: updateData.license_status || updateData.licensed,
                 address: updateData.physical_location || updateData.address,
-                latitude: updateData.latitude,
-                longitude: updateData.longitude,
+                latitude: this.sanitizeNumericField(updateData.latitude),
+                longitude: this.sanitizeNumericField(updateData.longitude),
                 contact_personemail: updateData.contact_personemail,
                 contact_personmobile: updateData.contact_personmobile,
                 contact_personname: updateData.contact_personname,
@@ -194,9 +197,7 @@ class FacilityRequestService {
                 requested_by: userId,
                 facility_id: updateData.facility_id, // Reference to existing facility
                 user_district_id: updateData.user_district_id,
-                support_document: files.find(f => f.fieldname === "support_document")?.path || null,
                 operating_license: files.find(f => f.fieldname === "operating_license")?.path || null,
-                council_minutes: files.find(f => f.fieldname === "council_minutes")?.path || null,
                 district_letter: files.find(f => f.fieldname === "district_letter")?.path || null,
                 status: 'initiated'
             }, { transaction });
@@ -454,8 +455,8 @@ class FacilityRequestService {
                 await existingMfl.update({
                     name: request.name,
                     shortname: request.name,
-                    longtitude: request.longitude,
-                    latitude: request.latitude,
+                    longtitude: this.sanitizeNumericField(request.longitude),
+                    latitude: this.sanitizeNumericField(request.latitude),
                     // keep existing nhfrid if present
                     nhfrid: existingMfl.nhfrid || null,
                     subcounty_uid: request.subcounty_uid || null,
@@ -521,8 +522,8 @@ class FacilityRequestService {
         const createdMfl = await Mfl.create({
             name: request.name,
             shortname: request.name,
-            longtitude: request.longitude,
-            latitude: request.latitude,
+            longtitude: this.sanitizeNumericField(request.longitude),
+            latitude: this.sanitizeNumericField(request.latitude),
             nhfrid: nhfrid,
             subcounty_uid: request.subcounty_uid || null,
             subcounty: request.subcounty || null,
@@ -727,7 +728,6 @@ class FacilityRequestService {
                 request_type: 'Facility_Deactivation',
                 requested_by: userId,
                 user_district_id: deactivationData.user_district_id,
-                support_document: files.find(f => f.fieldname === "support_document")?.path || null,
                 status: 'initiated'
             }, { transaction });
 
