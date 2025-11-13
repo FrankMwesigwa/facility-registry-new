@@ -23,10 +23,15 @@ const FacilityList = ({ url, link, showUpload = false }) => {
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
 
+    const ITEMS_PER_PAGE = 20;
+    
     const [pagination, setPagination] = useState({
-        currentPage: 1,
+        page: 1,
+        limit: ITEMS_PER_PAGE,
+        total: 0,
         totalPages: 1,
-        totalItems: 0
+        hasNextPage: false,
+        hasPreviousPage: false
     });
 
     const fetchData = useCallback(async (page = 1) => {
@@ -34,8 +39,8 @@ const FacilityList = ({ url, link, showUpload = false }) => {
             setLoading(true);
             const queryParams = new URLSearchParams({
                 page: page.toString(),
-                limit: '20',
-                search: filterValue,
+                limit: ITEMS_PER_PAGE.toString(),
+                ...(filterValue && { search: filterValue }),
                 ...activeFilters
             }).toString();
 
@@ -57,12 +62,30 @@ const FacilityList = ({ url, link, showUpload = false }) => {
             }));
 
             setData(transformedData);
-            setPagination(prev => ({
-                ...prev,
-                currentPage: page,
-                totalPages: Math.ceil((response?.data?.results || 0) / 20), // Use fixed value
-                totalItems: response?.data?.results || 0
-            }));
+            
+            // Use pagination metadata from backend response
+            if (response?.data?.pagination) {
+                setPagination({
+                    page: response.data.pagination.page,
+                    limit: response.data.pagination.limit,
+                    total: response.data.pagination.total,
+                    totalPages: response.data.pagination.totalPages,
+                    hasNextPage: response.data.pagination.hasNextPage,
+                    hasPreviousPage: response.data.pagination.hasPreviousPage
+                });
+            } else {
+                // Fallback for backward compatibility
+                const total = response?.data?.results || 0;
+                const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+                setPagination({
+                    page: page,
+                    limit: ITEMS_PER_PAGE,
+                    total: total,
+                    totalPages: totalPages,
+                    hasNextPage: page < totalPages,
+                    hasPreviousPage: page > 1
+                });
+            }
         } catch (error) {
             console.error('Error loading data:', error);
         } finally {
@@ -107,39 +130,41 @@ const FacilityList = ({ url, link, showUpload = false }) => {
     }, [filterValue, activeFilters]);
 
     useEffect(() => {
-        fetchData(pagination.currentPage);
-    }, [activeFilters, pagination.currentPage, fetchData]);
+        fetchData(pagination.page);
+    }, [activeFilters, pagination.page, fetchData]);
+    
+    // Reset paging state when fetch completes
+    useEffect(() => {
+        if (!loading) {
+            setPaging(false);
+        }
+    }, [loading]);
 
     const handleFilterChange = (value) => {
         setFilterValue(value);
-        setPagination(prev => ({ ...prev, currentPage: 1 }));
-        // Trigger search immediately when filter changes
-        fetchData(1);
+        setPagination(prev => ({ ...prev, page: 1 }));
+        // The useEffect will trigger fetchData when filterValue changes
     };
 
     const handleApplyFilters = (filters) => {
         setActiveFilters(filters);
-        setPagination(prev => ({ ...prev, currentPage: 1 }));
+        setPagination(prev => ({ ...prev, page: 1 }));
     };
 
-    const handlePageChange = async (page) => {
-        if (page < 1 || page > pagination.totalPages) return;
-        setPagination(prev => ({ ...prev, currentPage: page }));
-        try {
-            setPaging(true);
-            await fetchData(page);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } finally {
-            setPaging(false);
-        }
+    const handlePageChange = (page) => {
+        if (page < 1 || (pagination.totalPages > 0 && page > pagination.totalPages)) return;
+        setPaging(true);
+        setPagination(prev => ({ ...prev, page: page }));
+        // Scroll to top when page changes
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleClearAll = () => {
         setActiveFilters({});
         setFilterValue("");
-        setPagination(prev => ({ ...prev, currentPage: 1 }));
+        setPagination(prev => ({ ...prev, page: 1 }));
         setClearSignal(prev => prev + 1);
-        fetchData(1);
+        // The useEffect will trigger fetchData when filters are cleared
     };
 
     const handleExportExcel = async () => {
@@ -189,8 +214,8 @@ const FacilityList = ({ url, link, showUpload = false }) => {
                 totalUpdated += data.updated || 0;
             }
             setUploadMsg(`Upload completed: inserted ${totalInserted}, updated ${totalUpdated}`);
-            await fetchData(1);
-            setPagination(prev => ({ ...prev, currentPage: 1 }));
+            // Reset to page 1 and refresh - useEffect will trigger fetchData
+            setPagination(prev => ({ ...prev, page: 1 }));
         } catch (err) {
             setUploadMsg(err.response?.data?.error || err.message);
         } finally {
@@ -249,7 +274,7 @@ const FacilityList = ({ url, link, showUpload = false }) => {
                             <h5 class="section-title">
                                 <i class="fas fa-hospital"></i>
                                 Health Facilities
-                                <span class="facility-count">({pagination.totalItems} total)</span>
+                                <span class="facility-count">({pagination.total} total)</span>
                             </h5>
                             <div class="export-buttons d-flex align-items-center">
                                 {showUpload && (
@@ -284,19 +309,35 @@ const FacilityList = ({ url, link, showUpload = false }) => {
                                 {/* PDF export removed */}
                                 <nav aria-label="Facilities pagination">
                                     <ul class="pagination pagination-sm mb-0">
-                                        <li class={`page-item ${pagination.currentPage === 1 || paging ? 'disabled' : ''}`}>
-                                            <button class="page-link" onClick={() => handlePageChange(1)}>First</button>
+                                        <li class={`page-item ${(pagination.page === 1 || !pagination.hasPreviousPage || paging) ? 'disabled' : ''}`}>
+                                            <button 
+                                                class="page-link" 
+                                                onClick={() => handlePageChange(1)}
+                                                disabled={pagination.page === 1 || !pagination.hasPreviousPage || paging}
+                                            >
+                                                First
+                                            </button>
                                         </li>
-                                        <li class={`page-item ${pagination.currentPage === 1 || paging ? 'disabled' : ''}`}>
-                                            <button class="page-link" onClick={() => handlePageChange(pagination.currentPage - 1)}>Prev</button>
+                                        <li class={`page-item ${(!pagination.hasPreviousPage || paging) ? 'disabled' : ''}`}>
+                                            <button 
+                                                class="page-link" 
+                                                onClick={() => handlePageChange(pagination.page - 1)}
+                                                disabled={!pagination.hasPreviousPage || paging}
+                                            >
+                                                Prev
+                                            </button>
                                         </li>
                                         <li class="page-item disabled">
                                             <span class="page-link">
-                                                Page {pagination.currentPage} of {pagination.totalPages}
+                                                Page {pagination.page} of {pagination.totalPages || 1}
                                             </span>
                                         </li>
-                                        <li class={`page-item ${pagination.currentPage === pagination.totalPages || paging ? 'disabled' : ''}`}>
-                                            <button class="page-link" onClick={() => handlePageChange(pagination.currentPage + 1)}>
+                                        <li class={`page-item ${(!pagination.hasNextPage || paging) ? 'disabled' : ''}`}>
+                                            <button 
+                                                class="page-link" 
+                                                onClick={() => handlePageChange(pagination.page + 1)}
+                                                disabled={!pagination.hasNextPage || paging}
+                                            >
                                                 {paging ? (
                                                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                                 ) : (
@@ -304,8 +345,14 @@ const FacilityList = ({ url, link, showUpload = false }) => {
                                                 )}
                                             </button>
                                         </li>
-                                        <li class={`page-item ${pagination.currentPage === pagination.totalPages || paging ? 'disabled' : ''}`}>
-                                            <button class="page-link" onClick={() => handlePageChange(pagination.totalPages)}>Last</button>
+                                        <li class={`page-item ${(pagination.page === pagination.totalPages || !pagination.hasNextPage || paging || pagination.totalPages === 0) ? 'disabled' : ''}`}>
+                                            <button 
+                                                class="page-link" 
+                                                onClick={() => handlePageChange(pagination.totalPages)}
+                                                disabled={pagination.page === pagination.totalPages || !pagination.hasNextPage || paging || pagination.totalPages === 0}
+                                            >
+                                                Last
+                                            </button>
                                         </li>
                                     </ul>
                                 </nav>
