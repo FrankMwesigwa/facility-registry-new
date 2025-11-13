@@ -158,7 +158,23 @@ router.get("/", async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 50;
         const { rows, count } = await MflService.findAll(page, limit, req.query);
-        res.status(200).json({ results: count, facilities: rows });
+        
+        // Calculate pagination metadata
+        const totalPages = Math.ceil(count / limit);
+        const hasNextPage = page < totalPages;
+        const hasPreviousPage = page > 1;
+        
+        res.status(200).json({
+            facilities: rows,
+            pagination: {
+                total: count,
+                page: page,
+                limit: limit,
+                totalPages: totalPages,
+                hasNextPage: hasNextPage,
+                hasPreviousPage: hasPreviousPage
+            }
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
