@@ -59,8 +59,12 @@ app.use("/api/mfl", Mfl);
 app.use("/api/test", TestWebhook);
 app.use("/api/ids", FacilityIDs);
 
-app.listen(process.env.PORT, async () => {
-  console.log(`🚀Server started Successfully on port ${process.env.PORT} in ${process.env.NODE_ENV}`);
+// Use defaults if env vars are missing to avoid 'undefined' output
+const PORT = Number(process.env.PORT) || 9000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+
+app.listen(PORT, async () => {
+  console.log(`🚀Server started Successfully on port ${PORT} in ${NODE_ENV}`);
   await connectPool();
   await connectSequelize();
   sequelize.sync({ force: false }).then(() => {
