@@ -24,15 +24,15 @@ const upload = multer({
 
 router.post("/", authenticate, upload.any(), async (req, res) => {
     try {
-        // Add user district_id to request data (defensive: ensure req.user exists)
+        // Add user district_id to request data
         const requestData = {
             ...req.body,
-            user_district_id: req.user ? req.user.district_id : null
+            user_district_id: req.user.district_id
         };
 
         const request = await FacilityRequestService.createRequest(
-            requestData,
-            req.user ? req.user.id : null,
+            requestData, 
+            req.user.id, 
             req.files || []
         );
 
@@ -42,12 +42,9 @@ router.post("/", authenticate, upload.any(), async (req, res) => {
         });
     } catch (error) {
         console.error("Error saving facility:", error);
-        console.error("Full stack:", error.stack);
-        console.error("Request data:", req.body);
         res.status(500).json({ 
             error: "Internal Server Error", 
-            details: error.message,
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            details: error.message 
         });
     }
 });
@@ -58,12 +55,12 @@ router.post("/update", authenticate, upload.any(), async (req, res) => {
         // Add user district_id to request data
         const updateData = {
             ...req.body,
-            user_district_id: req.user ? req.user.district_id : null
+            user_district_id: req.user.district_id
         };
 
         const request = await FacilityRequestService.createUpdateRequest(
-            updateData,
-            req.user ? req.user.id : null,
+            updateData, 
+            req.user.id, 
             req.files || []
         );
 
@@ -86,12 +83,12 @@ router.post("/deactivate", authenticate, upload.any(), async (req, res) => {
         // Add user district_id to request data
         const deactivationData = {
             ...req.body,
-            user_district_id: req.user ? req.user.district_id : null
+            user_district_id: req.user.district_id
         };
 
         const request = await FacilityRequestService.createDeactivationRequest(
-            deactivationData,
-            req.user ? req.user.id : null,
+            deactivationData, 
+            req.user.id, 
             req.files || []
         );
 

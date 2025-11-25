@@ -10,7 +10,7 @@ import WebhookService from './webhookService.js';
 
 /**
  * Service class for handling facility request operations
-*/
+ */
 class FacilityRequestService {
     
     /**
@@ -114,17 +114,6 @@ class FacilityRequestService {
         const transaction = await sequelize.transaction();
         
         try {
-            // Parse services if it's a JSON string (from FormData)
-            let services = requestData.services || [];
-            if (typeof services === 'string') {
-                try {
-                    services = JSON.parse(services);
-                } catch (e) {
-                    console.warn('Failed to parse services:', e.message);
-                    services = [];
-                }
-            }
-
             const request = await FacilityRequests.create({
                 name: requestData.name,
                 level: requestData.level,
@@ -141,7 +130,7 @@ class FacilityRequestService {
                 contact_persontitle: requestData.contact_persontitle,
                 date_opened: requestData.date_opened,
                 bed_capacity: requestData.bed_capacity,
-                services: services,
+                services: requestData.services || [],
                 region_id: requestData.region_id,
                 district_id: requestData.district_id,
                 subcounty_id: requestData.sub_county_id || requestData.subcounty_id,
@@ -184,17 +173,6 @@ class FacilityRequestService {
                 throw new Error('Facility ID is required for update requests');
             }
 
-            // Parse services if it's a JSON string (from FormData)
-            let services = updateData.services || [];
-            if (typeof services === 'string') {
-                try {
-                    services = JSON.parse(services);
-                } catch (e) {
-                    console.warn('Failed to parse services:', e.message);
-                    services = [];
-                }
-            }
-
             const request = await FacilityRequests.create({
                 name: updateData.name,
                 level: updateData.level,
@@ -211,7 +189,7 @@ class FacilityRequestService {
                 contact_persontitle: updateData.contact_persontitle,
                 date_opened: updateData.date_opened,
                 bed_capacity: updateData.bed_capacity,
-                services: services,
+                services: updateData.services || [],
                 region_id: updateData.region_id,
                 district_id: updateData.district_id,
                 subcounty_id: updateData.sub_county_id || updateData.subcounty_id,
