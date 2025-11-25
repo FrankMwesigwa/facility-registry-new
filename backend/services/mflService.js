@@ -13,6 +13,13 @@ class MflService {
         return await Mfl.create(data);
     }
 
+    static async findAllCoordinates() {
+        return await Mfl.findAll({
+            attributes: ['id', 'name', 'latitude', 'longtitude'],
+            order: [['name', 'ASC']],
+        });
+    }
+
     static async getStats() {
         const [
             totalFacilities,

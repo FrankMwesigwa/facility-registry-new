@@ -144,8 +144,17 @@ const AdditionRequest = ({url, link, role}) => {
         return true
     }
 
-    const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
         e.preventDefault()
+
+        // Check for token presence before submitting
+        const token = localStorage.getItem('token')
+        if (!token) {
+            toast.error('Authentication token missing. Please login again.')
+            history.push('/login')
+            return
+        }
+
         if (!validateForm()) return
 
         setLoading(true)
@@ -172,19 +181,23 @@ const AdditionRequest = ({url, link, role}) => {
                 }
             })
 
-            const token = localStorage.getItem('token')
+            // The Authorization header will be automatically set by the axios interceptor now
             await API.post(`/${url}`, submitData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
                 }
             })
 
             toast.success('Facility request submitted successfully!')
-                history.push(`/${link}`)
+            history.push(`/${link}`)
         } catch (error) {
             console.error('Error submitting request:', error)
-            toast.error(error.response?.data?.error || 'Failed to submit request')
+            if (error.response?.status === 401) {
+                toast.error('Session expired or unauthorized. Please login again.')
+                history.push('/login')
+            } else {
+                toast.error(error.response?.data?.error || 'Failed to submit request')
+            }
         } finally {
             setLoading(false)
         }

@@ -1,4 +1,4 @@
- /* Search Section */
+/* Search Section */
  .search-section {
      background: white;
      padding: 1.5rem 0;
@@ -206,6 +206,7 @@
      color: var(--text-muted);
      font-size: 0.9rem;
      font-weight: normal;
+     margin-left: 8px;
  }
 
  /* More compact table styles */
@@ -307,6 +308,11 @@
 
  .btn-excel {
      background-color: #28a745;
+ }
+
+ .btn-excel:hover {
+     background-color: #218838;
+     color: white;
  }
 
  .btn-pdf {

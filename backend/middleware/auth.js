@@ -7,7 +7,11 @@ const authenticate = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token.replace('Bearer ', ''), process.env.JWT_SECRET);
-        const user = await User.findByPk(decoded.id)
+        const user = await User.findByPk(decoded.id);
+        if (!user) {
+            // If token is valid but user no longer exists, deny access
+            return res.status(401).json({ message: 'User not found' });
+        }
         req.user = user;
         next();
     } catch (error) {

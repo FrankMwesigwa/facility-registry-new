@@ -32,6 +32,52 @@
     background: white;
 }
 
+.ownership-category {
+    border: 2px solid #007bff; /* Blue border for Ownership */
+    border-radius: 8px;
+    padding: 0.8rem;
+    margin-bottom: 0; /* Removed bottom margin for side by side */
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.total-category {
+    border: 2px solid #052e4a; /* Red border for Total Facilities */
+    border-radius: 8px;
+    padding: 0.8rem;
+    margin-bottom: 0; /* Removed bottom margin for side by side */
+    background-color: rgba(58, 154, 217, 0.1);
+}
+
+.functionality-category {
+    border: 2px solid #28a745; /* Green border for Functionality */
+    border-radius: 8px;
+    padding: 0.8rem;
+    margin-bottom: 0; /* Removed bottom margin for side by side */
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+.categories-container {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+
+.category-label {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary-color);
+}
+
+.functionality-category {
+    border: 2px solid #28a745; /* Green border for Functionality */
+    border-radius: 8px;
+    padding: 0.8rem;
+    background-color: rgba(40, 167, 69, 0.1);
+    margin-bottom: 1rem;
+}
+
 .stats-section h2 {
     text-align: center;
     margin-bottom: 1.5rem;

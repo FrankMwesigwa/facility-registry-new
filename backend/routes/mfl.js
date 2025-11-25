@@ -10,6 +10,17 @@ import MflService from "../services/mflService.js";
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
+// GET endpoint to fetch latitude and longitude of health facilities
+router.get("/coordinates", async (req, res) => {
+    try {
+        const coordinates = await MflService.findAllCoordinates();
+        res.status(200).json(coordinates);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 // POST /api/mfl/updates/webhook
 router.post('/updates/webhook', async (req, res) => {
     try {
