@@ -4,7 +4,7 @@ import UpdateFacility from '../../components/Requests/FacilityUpdate'
 const FacilityUpdate = () => {
    
     return (
-        <div className='container mt-5'>
+    <div className='container mt-5 pt-5'>
             <UpdateFacility link='mfl/owner' role='private' path='requests' />
         </div>
     )

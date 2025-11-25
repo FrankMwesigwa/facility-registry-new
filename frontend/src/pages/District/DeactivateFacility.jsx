@@ -3,7 +3,7 @@ import FacilityDeactivation from '../../components/Requests/FacilityDeactivation
 
 const DeactivateFacility = () => {
     return (
-        <div className='container mt-5'>
+    <div className='container mt-5 pt-5'>
             <FacilityDeactivation link='mfl/owner' role='district' path='district/requests' />
         </div>
     )

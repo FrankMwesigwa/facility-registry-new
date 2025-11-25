@@ -235,7 +235,7 @@ const FacilityList = ({ url, link, showUpload = false }) => {
                 <Filters close={handleClose} onApplyFilters={handleApplyFilters} />
             </FNModal>
             <div class="breadcrumb-section">
-                <div class="container">
+                <div class="container pt-5">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="home.html">Home</a></li>
