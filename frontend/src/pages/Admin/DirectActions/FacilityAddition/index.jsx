@@ -27,7 +27,7 @@ const AdditionRequest = ({url, link, role}) => {
         district_id: null,
         subcounty_id: null,
         role: `${role}`,
-        request_type: 'Facility_Addition'
+        request_type: 'new_facility'
     })
 
     const [regions, setRegions] = useState([])
@@ -298,14 +298,11 @@ const handleSubmit = async (e) => {
                                         <div className="col-md-6">
                                             <div className="mb-3">
                                                 <label className="form-label">Request Type</label>
-                                                <select className="form-control" 
-                                                        name="request_type"
-                                                        value={formData.request_type}
-                                                        onChange={handleInputChange}>
-                                                    <option value="new_facility">New Facility</option>
-                                                    <option value="facility_update">Facility Update</option>
-                                                    <option value="closure">Facility Closure</option>
-                                                </select>
+                                                {/* Hard-coded: New Facility is the only option */}
+                                                <input type="text"
+                                                       className="form-control"
+                                                       readOnly
+                                                       value="New Facility" />
                                             </div>
                                         </div>
                                     </div>

@@ -283,15 +283,15 @@ const AdditionRequest = ({url, link, role}) => {
                                             </div>
                                         </div>
                                         <div className="col-md-6">
-                                            <div className="mb-3">
+                                            <div className="mb-3"> 
                                                 <label className="form-label">Request Type</label>
                                                 <select className="form-control" 
                                                         name="request_type"
                                                         value={formData.request_type}
                                                         onChange={handleInputChange}>
                                                     <option value="new_facility">New Facility</option>
-                                                    <option value="facility_update">Facility Update</option>
-                                                    <option value="closure">Facility Closure</option>
+                                                    {/* <option value="facility_update">Facility Update</option>
+                                                    <option value="closure">Facility Closure</option> */}
                                                 </select>
                                             </div>
                                         </div>
