@@ -265,7 +265,7 @@ const FacilityUpdate = ({ url, link, role, path }) => {
             }
 
             const token = localStorage.getItem('token')
-            await API.post('/facilityRequests/update', submitData, {
+            await API.post('/facilityrequests/update', submitData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
