@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
+import Select from 'react-select'
 import './styles.css'
 import API from '../../../helpers/api'
 
@@ -13,6 +14,10 @@ const Dashboard = () => {
   })
   const [loading, setLoading] = useState(true)
   const [summary, setSummary] = useState([])
+  const [regions, setRegions] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [selectedRegion, setSelectedRegion] = useState(null)
+  const [selectedDistrict, setSelectedDistrict] = useState(null)
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -27,10 +32,59 @@ const Dashboard = () => {
     fetchStats()
   }, [])
 
+  // Fetch regions on component mount
+  useEffect(() => {
+    const fetchRegions = async () => {
+      try {
+        const response = await API.get('/mfl/regions')
+        const formattedRegions = response.data.map(region => ({
+          value: region.id,
+          label: region.name
+        }))
+        setRegions(formattedRegions)
+      } catch (error) {
+        console.error('Error fetching regions:', error)
+      }
+    }
+    fetchRegions()
+  }, [])
+
+  // Fetch districts when region is selected
+  useEffect(() => {
+    if (selectedRegion) {
+      const fetchDistricts = async () => {
+        try {
+          const response = await API.get(`/mfl/districts?region_id=${selectedRegion.value}`)
+          const formattedDistricts = response.data.map(district => ({
+            value: district.id,
+            label: district.name
+          }))
+          setDistricts(formattedDistricts)
+          setSelectedDistrict(null) // Reset district when region changes
+        } catch (error) {
+          console.error('Error fetching districts:', error)
+        }
+      }
+      fetchDistricts()
+    } else {
+      setDistricts([])
+      setSelectedDistrict(null)
+    }
+  }, [selectedRegion])
+
+  // Fetch summary with filters
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await API.get('/mfl/summary/level-ownership')
+        setLoading(true)
+        const queryParams = new URLSearchParams()
+        if (selectedRegion) {
+          queryParams.append('region_id', selectedRegion.value)
+        }
+        if (selectedDistrict) {
+          queryParams.append('district_id', selectedDistrict.value)
+        }
+        const { data } = await API.get(`/mfl/summary/level-ownership?${queryParams.toString()}`)
         setSummary(data)
       } catch (e) {
       } finally {
@@ -38,7 +92,7 @@ const Dashboard = () => {
       }
     }
     fetchData()
-  }, [])
+  }, [selectedRegion, selectedDistrict])
 
   return (
     <Fragment>
@@ -119,25 +173,62 @@ const Dashboard = () => {
               </h5>
             </div>
             <div class="section-body">
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <label className="form-label">Region</label>
+                  <Select
+                    value={selectedRegion}
+                    options={regions}
+                    onChange={setSelectedRegion}
+                    isClearable
+                    isSearchable
+                    classNamePrefix="react-select"
+                    placeholder="Select a region..."
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label">District</label>
+                  <Select
+                    value={selectedDistrict}
+                    options={districts}
+                    onChange={setSelectedDistrict}
+                    isClearable
+                    isSearchable
+                    isDisabled={!selectedRegion}
+                    classNamePrefix="react-select"
+                    placeholder="Select a district..."
+                  />
+                </div>
+              </div>
               <div class="table-responsive">
                 <table class="table summary-table">
                   <thead>
                     <tr>
-                      <th>FACILITY LEVEL</th>
+                      <th>FACILITY LEVEL</th> 
                       <th class="text-center">GOVERNMENT</th>
                       <th class="text-center">PRIVATE FOR PROFIT</th>
                       <th class="text-center">PRIVATE NOT FOR PROFIT</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {summary.map((row) => (
-                      <tr key={row.level}>
-                        <td><strong>{row.level}</strong></td>
-                        <td class="text-center">{(row.GOV || 0).toLocaleString()}</td>
-                        <td class="text-center">{(row.PFP || 0).toLocaleString()}</td>
-                        <td class="text-center">{(row.PNFP || 0).toLocaleString()}</td>
+                    {loading ? (
+                      <tr>
+                        <td colSpan="4" className="text-center">Loading...</td>
                       </tr>
-                    ))}
+                    ) : summary.length === 0 ? (
+                      <tr>
+                        <td colSpan="4" className="text-center">No data available</td>
+                      </tr>
+                    ) : (
+                      summary.map((row) => (
+                        <tr key={row.level}>
+                          <td><strong>{row.level}</strong></td>
+                          <td class="text-center">{(row.GOV || 0).toLocaleString()}</td>
+                          <td class="text-center">{(row.PFP || 0).toLocaleString()}</td>
+                          <td class="text-center">{(row.PNFP || 0).toLocaleString()}</td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

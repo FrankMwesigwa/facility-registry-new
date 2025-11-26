@@ -72,7 +72,32 @@ router.get("/stats", async (req, res) => {
 // Summary by level and ownership
 router.get("/summary/level-ownership", async (req, res) => {
     try {
-        const rows = await MflService.getLevelOwnershipSummary();
+        const filters = {
+            region_id: req.query.region_id,
+            district_id: req.query.district_id,
+        };
+        const rows = await MflService.getLevelOwnershipSummary(filters);
+        res.status(200).json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get regions from mfl
+router.get("/regions", async (req, res) => {
+    try {
+        const rows = await MflService.getRegions();
+        res.status(200).json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get districts by region
+router.get("/districts", async (req, res) => {
+    try {
+        const region_id = req.query.region_id;
+        const rows = await MflService.getDistricts(region_id);
         res.status(200).json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });

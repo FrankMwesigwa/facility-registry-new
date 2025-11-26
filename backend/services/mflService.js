@@ -47,7 +47,20 @@ class MflService {
         };
     }
 
-    static async getLevelOwnershipSummary() {
+    static async getLevelOwnershipSummary(filters = {}) {
+        let whereClause = '1=1';
+        const replacements = {};
+
+        if (filters.region_id) {
+            whereClause += ' AND f.region_id = :region_id';
+            replacements.region_id = parseInt(filters.region_id);
+        }
+
+        if (filters.district_id) {
+            whereClause += ' AND f.district_id = :district_id';
+            replacements.district_id = parseInt(filters.district_id);
+        }
+
         const rows = await sequelize.query(
             `
             SELECT 
@@ -56,10 +69,11 @@ class MflService {
                 COUNT(DISTINCT CASE WHEN f.ownership = 'PFP' THEN f.id END) AS "PFP",
                 COUNT(DISTINCT CASE WHEN f.ownership = 'PNFP' THEN f.id END) AS "PNFP"
             FROM nhfr.mfl f
+            WHERE ${whereClause}
             GROUP BY f."level"
             ORDER BY f."level" ASC;
             `,
-            { type: QueryTypes.SELECT }
+            { replacements, type: QueryTypes.SELECT }
         );
         return rows;
     }
@@ -443,6 +457,55 @@ class MflService {
         });
 
         return { inserted, updated, total: rows.length };
+    }
+
+    static async getRegions() {
+        const rows = await sequelize.query(
+            `
+            SELECT DISTINCT 
+                r.id,
+                r.name
+            FROM nhfr.mfl f
+            JOIN nhfr.admin_units r ON f.region_id = r.id
+            WHERE f.region_id IS NOT NULL
+            ORDER BY r.name ASC
+            `,
+            { type: QueryTypes.SELECT }
+        );
+        return rows;
+    }
+
+    static async getDistricts(region_id) {
+        if (!region_id) {
+            const rows = await sequelize.query(
+                `
+                SELECT DISTINCT 
+                    d.id,
+                    d.name
+                FROM nhfr.mfl f
+                JOIN nhfr.admin_units d ON f.district_id = d.id
+                WHERE f.district_id IS NOT NULL
+                ORDER BY d.name ASC
+                `,
+                { type: QueryTypes.SELECT }
+            );
+            return rows;
+        }
+
+        const rows = await sequelize.query(
+            `
+            SELECT DISTINCT 
+                d.id,
+                d.name
+            FROM nhfr.mfl f
+            JOIN nhfr.admin_units d ON f.district_id = d.id
+            WHERE f.district_id IS NOT NULL 
+            AND f.region_id = :region_id
+            ORDER BY d.name ASC
+            `,
+            { replacements: { region_id: parseInt(region_id) }, type: QueryTypes.SELECT }
+        );
+        return rows;
     }
 }
 
