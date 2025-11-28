@@ -208,7 +208,7 @@ const AdditionRequest = ({url, link, role}) => {
 
     return (
         <Fragment>
-            <div className="container mt-5">
+            <div className="container mt-5 pt-5">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <h2 className="mb-1" style={{ color: 'var(--primary-color)', fontWeight: '700', fontSize: '1.5rem' }}>Add Facility Request</h2>
@@ -283,15 +283,15 @@ const AdditionRequest = ({url, link, role}) => {
                                             </div>
                                         </div>
                                         <div className="col-md-6">
-                                            <div className="mb-3">
+                                            <div className="mb-3"> 
                                                 <label className="form-label">Request Type</label>
                                                 <select className="form-control" 
                                                         name="request_type"
                                                         value={formData.request_type}
                                                         onChange={handleInputChange}>
                                                     <option value="new_facility">New Facility</option>
-                                                    <option value="facility_update">Facility Update</option>
-                                                    <option value="closure">Facility Closure</option>
+                                                    {/* <option value="facility_update">Facility Update</option>
+                                                    <option value="closure">Facility Closure</option> */}
                                                 </select>
                                             </div>
                                         </div>

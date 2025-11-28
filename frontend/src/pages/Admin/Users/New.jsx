@@ -39,7 +39,7 @@ const AddUser = () => {
   }
 
   return (
-    <div className="container mt-5 pt-4">
+  <div className="container mt-5 pt-5">
      
 
       {error && (

@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
+import Select from 'react-select'
 import './styles.css'
 import API from '../../../helpers/api'
 
@@ -13,23 +14,86 @@ const Home = () => {
   })
   const [loading, setLoading] = useState(true)
   const [summary, setSummary] = useState([])
+  const [regions, setRegions] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [selectedRegion, setSelectedRegion] = useState(null)
+  const [selectedDistrict, setSelectedDistrict] = useState(null)
 
+  // Fetch stats
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchStats = async () => {
       try {
-        const [statsRes, summaryRes] = await Promise.all([
-          API.get('/mfl/stats'),
-          API.get('/mfl/summary/level-ownership'),
-        ])
+        const statsRes = await API.get('/mfl/stats')
         setStats(statsRes.data)
+      } catch (e) {
+        console.error('Error fetching stats:', e)
+      }
+    }
+    fetchStats()
+  }, [])
+
+  // Fetch regions on component mount
+  useEffect(() => {
+    const fetchRegions = async () => {
+      try {
+        const response = await API.get('/mfl/regions')
+        const formattedRegions = response.data.map(region => ({
+          value: region.id,
+          label: region.name
+        }))
+        setRegions(formattedRegions)
+      } catch (error) {
+        console.error('Error fetching regions:', error)
+      }
+    }
+    fetchRegions()
+  }, [])
+
+  // Fetch districts when region is selected
+  useEffect(() => {
+    if (selectedRegion) {
+      const fetchDistricts = async () => {
+        try {
+          const response = await API.get(`/mfl/districts?region_id=${selectedRegion.value}`)
+          const formattedDistricts = response.data.map(district => ({
+            value: district.id,
+            label: district.name
+          }))
+          setDistricts(formattedDistricts)
+          setSelectedDistrict(null) // Reset district when region changes
+        } catch (error) {
+          console.error('Error fetching districts:', error)
+        }
+      }
+      fetchDistricts()
+    } else {
+      setDistricts([])
+      setSelectedDistrict(null)
+    }
+  }, [selectedRegion])
+
+  // Fetch summary with filters
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        setLoading(true)
+        const queryParams = new URLSearchParams()
+        if (selectedRegion) {
+          queryParams.append('region_id', selectedRegion.value)
+        }
+        if (selectedDistrict) {
+          queryParams.append('district_id', selectedDistrict.value)
+        }
+        const summaryRes = await API.get(`/mfl/summary/level-ownership?${queryParams.toString()}`)
         setSummary(summaryRes.data || [])
       } catch (e) {
+        console.error('Error fetching summary:', e)
       } finally {
         setLoading(false)
       }
     }
-    fetchData()
-  }, [])
+    fetchSummary()
+  }, [selectedRegion, selectedDistrict])
   return (
     <Fragment>
       <div class="container">
@@ -46,59 +110,69 @@ const Home = () => {
       <section class="stats-section">
         <div class="container">
           <h2>Health Facility Statistics</h2>
-          <div class="row g-2">
-            <div class="col-md-2">
-              <div class="stats-card">
-                <div class="stat-icon total">
-                  <i class="fas fa-hospital"></i>
+          <div className="row g-2 categories-container">
+            <div className="col-md-4 total-category">
+              <div className="stats-card">
+                <div className="stat-icon total">
+                  <i className="fas fa-hospital"></i>
                 </div>
-                <div class="stats-number">{loading ? '—' : stats.totalFacilities.toLocaleString()}</div>
-                <div class="stats-label">Total Facilities</div>
+                <div className="stats-number">{loading ? '—' : stats.totalFacilities.toLocaleString()}</div>
+                <div className="stats-label">Total Facilities</div>
               </div>
             </div>
-            <div class="col-md-2">
-              <div class="stats-card">
-                <div class="stat-icon government">
-                  <i class="fas fa-building"></i>
+            <div className="col-md-4 ownership-category">
+              <h3 className="category-label">Ownership</h3>
+              <div className="row g-2">
+                <div className="col-md-4">
+                  <div className="stats-card">
+                    <div className="stat-icon government">
+                      <i className="fas fa-building"></i>
+                    </div>
+                    <div className="stats-number">{loading ? '—' : stats.government.toLocaleString()}</div>
+                    <div className="stats-label">Government</div>
+                  </div>
                 </div>
-                <div class="stats-number">{loading ? '—' : stats.government.toLocaleString()}</div>
-                <div class="stats-label">Government</div>
+                <div className="col-md-4">
+                  <div className="stats-card">
+                    <div className="stat-icon pnfp">
+                      <i className="fas fa-heart"></i>
+                    </div>
+                    <div className="stats-number">{loading ? '—' : stats.pnfp.toLocaleString()}</div>
+                    <div className="stats-label">PNFP</div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="stats-card">
+                    <div className="stat-icon pfp">
+                      <i className="fas fa-building"></i>
+                    </div>
+                    <div className="stats-number">{loading ? '—' : stats.private.toLocaleString()}</div>
+                    <div className="stats-label">PFP</div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="col-md-2">
-              <div class="stats-card">
-                <div class="stat-icon pnfp">
-                  <i class="fas fa-heart"></i>
+            <div className="col-md-4 functionality-category">
+              <h3 className="category-label">Functionality</h3>
+              <div className="row g-2">
+                <div className="col-md-6">
+                  <div className="stats-card">
+                    <div className="stat-icon functional">
+                      <i className="fas fa-check-circle"></i>
+                    </div>
+                    <div className="stats-number">{loading ? '—' : stats.functional.toLocaleString()}</div>
+                    <div className="stats-label">Functional</div>
+                  </div>
                 </div>
-                <div class="stats-number">{loading ? '—' : stats.pnfp.toLocaleString()}</div>
-                <div class="stats-label">PNFP</div>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="stats-card">
-                <div class="stat-icon pfp">
-                  <i class="fas fa-building"></i>
+                <div className="col-md-6">
+                  <div className="stats-card">
+                    <div className="stat-icon non-functional">
+                      <i className="fas fa-times-circle"></i>
+                    </div>
+                    <div className="stats-number">{loading ? '—' : stats.nonFunctional.toLocaleString()}</div>
+                    <div className="stats-label">Non Functional</div>
+                  </div>
                 </div>
-                <div class="stats-number">{loading ? '—' : stats.private.toLocaleString()}</div>
-                <div class="stats-label">PFP</div>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="stats-card">
-                <div class="stat-icon functional">
-                  <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stats-number">{loading ? '—' : stats.functional.toLocaleString()}</div>
-                <div class="stats-label">Functional</div>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="stats-card">
-                <div class="stat-icon non-functional">
-                  <i class="fas fa-times-circle"></i>
-                </div>
-                <div class="stats-number">{loading ? '—' : stats.nonFunctional.toLocaleString()}</div>
-                <div class="stats-label">Non Functional</div>
               </div>
             </div>
           </div>
@@ -114,6 +188,33 @@ const Home = () => {
             </h5>
           </div>
           <div class="section-body">
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <label className="form-label">Region</label>
+                <Select
+                  value={selectedRegion}
+                  options={regions}
+                  onChange={setSelectedRegion}
+                  isClearable
+                  isSearchable
+                  classNamePrefix="react-select"
+                  placeholder="Select a region..."
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">District</label>
+                <Select
+                  value={selectedDistrict}
+                  options={districts}
+                  onChange={setSelectedDistrict}
+                  isClearable
+                  isSearchable
+                  isDisabled={!selectedRegion}
+                  classNamePrefix="react-select"
+                  placeholder="Select a district..."
+                />
+              </div>
+            </div>
             <div class="table-responsive">
               <table class="table summary-table">
                 <thead>
@@ -125,14 +226,24 @@ const Home = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {summary.map((row) => (
-                    <tr key={row.level}>
-                      <td><strong>{row.level}</strong></td>
-                      <td class="text-center">{(row.GOV || 0).toLocaleString()}</td>
-                      <td class="text-center">{(row.PFP || 0).toLocaleString()}</td>
-                      <td class="text-center">{(row.PNFP || 0).toLocaleString()}</td>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="4" className="text-center">Loading...</td>
                     </tr>
-                  ))}
+                  ) : summary.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" className="text-center">No data available</td>
+                    </tr>
+                  ) : (
+                    summary.map((row) => (
+                      <tr key={row.level}>
+                        <td><strong>{row.level}</strong></td>
+                        <td class="text-center">{(row.GOV || 0).toLocaleString()}</td>
+                        <td class="text-center">{(row.PFP || 0).toLocaleString()}</td>
+                        <td class="text-center">{(row.PNFP || 0).toLocaleString()}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

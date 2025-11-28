@@ -235,7 +235,7 @@ const FacilityList = ({ url, link, showUpload = false }) => {
                 <Filters close={handleClose} onApplyFilters={handleApplyFilters} />
             </FNModal>
             <div class="breadcrumb-section">
-                <div class="container">
+                <div class="container pt-5">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="home.html">Home</a></li>
@@ -307,55 +307,6 @@ const FacilityList = ({ url, link, showUpload = false }) => {
                                     )}
                                 </button>
                                 {/* PDF export removed */}
-                                <nav aria-label="Facilities pagination">
-                                    <ul class="pagination pagination-sm mb-0">
-                                        <li class={`page-item ${(pagination.page === 1 || !pagination.hasPreviousPage || paging) ? 'disabled' : ''}`}>
-                                            <button 
-                                                class="page-link" 
-                                                onClick={() => handlePageChange(1)}
-                                                disabled={pagination.page === 1 || !pagination.hasPreviousPage || paging}
-                                            >
-                                                First
-                                            </button>
-                                        </li>
-                                        <li class={`page-item ${(!pagination.hasPreviousPage || paging) ? 'disabled' : ''}`}>
-                                            <button 
-                                                class="page-link" 
-                                                onClick={() => handlePageChange(pagination.page - 1)}
-                                                disabled={!pagination.hasPreviousPage || paging}
-                                            >
-                                                Prev
-                                            </button>
-                                        </li>
-                                        <li class="page-item disabled">
-                                            <span class="page-link">
-                                                Page {pagination.page} of {pagination.totalPages || 1}
-                                            </span>
-                                        </li>
-                                        <li class={`page-item ${(!pagination.hasNextPage || paging) ? 'disabled' : ''}`}>
-                                            <button 
-                                                class="page-link" 
-                                                onClick={() => handlePageChange(pagination.page + 1)}
-                                                disabled={!pagination.hasNextPage || paging}
-                                            >
-                                                {paging ? (
-                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                ) : (
-                                                    'Next'
-                                                )}
-                                            </button>
-                                        </li>
-                                        <li class={`page-item ${(pagination.page === pagination.totalPages || !pagination.hasNextPage || paging || pagination.totalPages === 0) ? 'disabled' : ''}`}>
-                                            <button 
-                                                class="page-link" 
-                                                onClick={() => handlePageChange(pagination.totalPages)}
-                                                disabled={pagination.page === pagination.totalPages || !pagination.hasNextPage || paging || pagination.totalPages === 0}
-                                            >
-                                                Last
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </nav>
                             </div>
                         </div>
                     </div>
@@ -415,6 +366,55 @@ const FacilityList = ({ url, link, showUpload = false }) => {
                                 </tbody>
                             </table>
                         </div>
+                        <nav aria-label="Facilities pagination">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class={`page-item ${(pagination.page === 1 || !pagination.hasPreviousPage || paging) ? 'disabled' : ''}`}>
+                                    <button 
+                                        class="page-link" 
+                                        onClick={() => handlePageChange(1)}
+                                        disabled={pagination.page === 1 || !pagination.hasPreviousPage || paging}
+                                    >
+                                        First
+                                    </button>
+                                </li>
+                                <li class={`page-item ${(!pagination.hasPreviousPage || paging) ? 'disabled' : ''}`}>
+                                    <button 
+                                        class="page-link" 
+                                        onClick={() => handlePageChange(pagination.page - 1)}
+                                        disabled={!pagination.hasPreviousPage || paging}
+                                    >
+                                        Prev
+                                    </button>
+                                </li>
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        Page {pagination.page} of {pagination.totalPages || 1}
+                                    </span>
+                                </li>
+                                <li class={`page-item ${(!pagination.hasNextPage || paging) ? 'disabled' : ''}`}>
+                                    <button 
+                                        class="page-link" 
+                                        onClick={() => handlePageChange(pagination.page + 1)}
+                                        disabled={!pagination.hasNextPage || paging}
+                                    >
+                                        {paging ? (
+                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        ) : (
+                                            'Next'
+                                        )}
+                                    </button>
+                                </li>
+                                <li class={`page-item ${(pagination.page === pagination.totalPages || !pagination.hasNextPage || paging || pagination.totalPages === 0) ? 'disabled' : ''}`}>
+                                    <button 
+                                        class="page-link" 
+                                        onClick={() => handlePageChange(pagination.totalPages)}
+                                        disabled={pagination.page === pagination.totalPages || !pagination.hasNextPage || paging || pagination.totalPages === 0}
+                                    >
+                                        Last
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>

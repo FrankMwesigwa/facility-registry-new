@@ -1,11 +1,11 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect, useCallback } from 'react'
 import Select from 'react-select'
 import API from '../../../../helpers/api'
 import { toast } from 'react-toastify'
 import { useHistory } from "react-router-dom";
 import './styles.css'
 
-const FacilityUpdate = ({ url, link, role, path }) => {
+const FacilityUpdate = ({ url, link, role }) => {
     const [loading, setLoading] = useState(false)
     const [facilitiesLoading, setFacilitiesLoading] = useState(true)
   const [facilities, setFacilities] = useState([])
@@ -31,10 +31,52 @@ const FacilityUpdate = ({ url, link, role, path }) => {
     const [subCounties, setSubCounties] = useState([])
     const [supportDocument, setSupportDocument] = useState(null)
 
+    const loadFacilities = useCallback(async () => {
+      try {
+            setFacilitiesLoading(true)
+            const token = localStorage.getItem('token')
+            // Use mfl/owner to list facilities owned by the logged-in user
+            const response = await API.get(`/mfl/owner`, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+            
+            // Format facilities for react-select
+            const facilitiesData = Array.isArray(response.data)
+                ? response.data
+                : (response.data?.facilities || response.data?.results || [])
+            const formattedFacilities = facilitiesData.map(facility => ({
+                value: facility.facility_id,
+                label: facility.name,
+                facility: facility
+            }))
+            
+            setFacilities(formattedFacilities)
+      } catch (err) {
+            console.error('Error loading facilities:', err)
+            toast.error('Failed to fetch facilities')
+        } finally {
+            setFacilitiesLoading(false)
+        }
+    }, [])
+
+    const fetchRegions = useCallback(async () => {
+        try {
+            const response = await API.get('/adminunits/regions')
+            const formattedRegions = response.data.map(region => ({
+                value: region.id,
+                label: region.name
+            }))
+            setRegions(formattedRegions)
+        } catch (error) {
+            console.error('Error fetching regions:', error)
+            toast.error('Failed to fetch regions')
+        }
+    }, [])
+
     useEffect(() => {
         loadFacilities()
         fetchRegions()
-    }, [])
+    }, [loadFacilities, fetchRegions])
 
     useEffect(() => {
         if (formData.region_id) {
@@ -54,46 +96,9 @@ const FacilityUpdate = ({ url, link, role, path }) => {
         }
     }, [formData.district_id])
 
-  const loadFacilities = async () => {
-      try {
-            setFacilitiesLoading(true)
-            const token = localStorage.getItem('token')
-          const response = await API.get(`/${link}`, {
-              headers: { Authorization: `Bearer ${token}` },
-            })
-            
-            // Format facilities for react-select
-            const facilitiesData = Array.isArray(response.data)
-                ? response.data
-                : (response.data?.facilities || [])
-            const formattedFacilities = facilitiesData.map(facility => ({
-                value: facility.facility_id,
-                label: facility.name,
-                facility: facility
-            }))
-            
-            setFacilities(formattedFacilities)
-      } catch (err) {
-            console.error('Error loading facilities:', err)
-            toast.error('Failed to fetch facilities')
-        } finally {
-            setFacilitiesLoading(false)
-        }
-    }
+  
 
-    const fetchRegions = async () => {
-        try {
-            const response = await API.get('/adminunits/regions')
-            const formattedRegions = response.data.map(region => ({
-                value: region.id,
-                label: region.name
-            }))
-            setRegions(formattedRegions)
-        } catch (error) {
-            console.error('Error fetching regions:', error)
-            toast.error('Failed to fetch regions')
-        }
-    }
+    
 
     const fetchDistricts = async (regionId, preselectDistrictId = null) => {
         try {
@@ -265,7 +270,7 @@ const FacilityUpdate = ({ url, link, role, path }) => {
             }
 
             const token = localStorage.getItem('token')
-            await API.post('/facilityRequests/update', submitData, {
+            await API.post('/facilityrequests/update', submitData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
@@ -275,7 +280,7 @@ const FacilityUpdate = ({ url, link, role, path }) => {
             console.log("Role ====>", submitData)
 
             toast.success('Facility update request submitted successfully!')
-            history.push(`/${path}`);
+            history.push(`/${link}`);
             setSelectedFacility(null)
             setShowForm(false)
             setSupportDocument(null)
@@ -289,7 +294,7 @@ const FacilityUpdate = ({ url, link, role, path }) => {
 
   return (
         <Fragment>
-            <div className="container mt-5">
+            <div className="container mt-5 pt-5">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <h2 className="mb-1" style={{ color: 'var(--primary-color)', fontWeight: '700', fontSize: '1.5rem' }}>

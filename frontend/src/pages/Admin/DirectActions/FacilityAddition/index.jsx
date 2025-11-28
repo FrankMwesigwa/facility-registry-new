@@ -27,7 +27,7 @@ const AdditionRequest = ({url, link, role}) => {
         district_id: null,
         subcounty_id: null,
         role: `${role}`,
-        request_type: 'Facility_Addition'
+        request_type: 'new_facility'
     })
 
     const [regions, setRegions] = useState([])
@@ -144,8 +144,17 @@ const AdditionRequest = ({url, link, role}) => {
         return true
     }
 
-    const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
         e.preventDefault()
+
+        // Check for token presence before submitting
+        const token = localStorage.getItem('token')
+        if (!token) {
+            toast.error('Authentication token missing. Please login again.')
+            history.push('/login')
+            return
+        }
+
         if (!validateForm()) return
 
         setLoading(true)
@@ -172,19 +181,23 @@ const AdditionRequest = ({url, link, role}) => {
                 }
             })
 
-            const token = localStorage.getItem('token')
+            // The Authorization header will be automatically set by the axios interceptor now
             await API.post(`/${url}`, submitData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
                 }
             })
 
             toast.success('Facility request submitted successfully!')
-                history.push(`/${link}`)
+            history.push(`/${link}`)
         } catch (error) {
             console.error('Error submitting request:', error)
-            toast.error(error.response?.data?.error || 'Failed to submit request')
+            if (error.response?.status === 401) {
+                toast.error('Session expired or unauthorized. Please login again.')
+                history.push('/login')
+            } else {
+                toast.error(error.response?.data?.error || 'Failed to submit request')
+            }
         } finally {
             setLoading(false)
         }
@@ -208,7 +221,7 @@ const AdditionRequest = ({url, link, role}) => {
 
     return (
         <Fragment>
-            <div className="container mt-5">
+            <div className="container mt-5 pt-5">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <h2 className="mb-1" style={{ color: 'var(--primary-color)', fontWeight: '700', fontSize: '1.5rem' }}>Add Facility Request</h2>
@@ -285,14 +298,11 @@ const AdditionRequest = ({url, link, role}) => {
                                         <div className="col-md-6">
                                             <div className="mb-3">
                                                 <label className="form-label">Request Type</label>
-                                                <select className="form-control" 
-                                                        name="request_type"
-                                                        value={formData.request_type}
-                                                        onChange={handleInputChange}>
-                                                    <option value="new_facility">New Facility</option>
-                                                    <option value="facility_update">Facility Update</option>
-                                                    <option value="closure">Facility Closure</option>
-                                                </select>
+                                                {/* Hard-coded: New Facility is the only option */}
+                                                <input type="text"
+                                                       className="form-control"
+                                                       readOnly
+                                                       value="New Facility" />
                                             </div>
                                         </div>
                                     </div>

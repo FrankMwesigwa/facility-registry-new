@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from "cors";
 import path from 'path';
+import fs from 'fs';
 import dotenv from "dotenv";
 import morgan from "morgan";
 import bodyParser from 'body-parser';
@@ -20,7 +21,19 @@ if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 app.set('etag', false);
 
 const __dirname = path.resolve();
-app.use("/uploads", express.static(path.join(__dirname, 'uploads')));
+
+// Ensure uploads directory exists to avoid ENOENT errors when multer writes files
+const uploadsDir = path.join(__dirname, 'uploads');
+try {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log('Created uploads directory at', uploadsDir);
+  }
+} catch (err) {
+  console.error('Failed to create uploads directory:', err.message);
+}
+
+app.use("/uploads", express.static(uploadsDir));
 
 import Levels from './routes/levels.js'
 import Units from './routes/units.js';
@@ -59,8 +72,12 @@ app.use("/api/mfl", Mfl);
 app.use("/api/test", TestWebhook);
 app.use("/api/ids", FacilityIDs);
 
-app.listen(process.env.PORT, async () => {
-  console.log(`🚀Server started Successfully on port ${process.env.PORT} in ${process.env.NODE_ENV}`);
+// Use defaults if env vars are missing to avoid 'undefined' output
+const PORT = Number(process.env.PORT) || 9000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+
+app.listen(PORT, async () => {
+  console.log(`🚀Server started Successfully on port ${PORT} in ${NODE_ENV}`);
   await connectPool();
   await connectSequelize();
   sequelize.sync({ force: false }).then(() => {

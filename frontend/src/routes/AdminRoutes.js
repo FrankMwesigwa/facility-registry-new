@@ -30,7 +30,7 @@ const ProtectedAdminRoute = ({ component: Component, ...rest }) => {
             render={props =>
                 isAuthenticated ? (
                     <AdminLayout>
-                        <Component {...props} />
+                        <Component {...props} {...rest} />
                     </AdminLayout>
                 ) : (
                     <Redirect
@@ -55,12 +55,12 @@ const AdminRoutes = () => (
         <ProtectedAdminRoute exact path="/admin/dashboard" component={Dashboard} />
         <ProtectedAdminRoute exact path="/admin/units" component={AdminUnits} />
         <ProtectedAdminRoute exact path="/admin/levels" component={AdminLevels} />
-        <ProtectedAdminRoute exact path="/admin/direct/addition" component={FacilityAddition} />
-        <ProtectedAdminRoute exact path="/admin/direct/update" component={FacilityUpdate} />
+        <ProtectedAdminRoute exact path="/admin/direct/addition" component={FacilityAddition} url="facilityrequests" link="admin/facilityrequests" />
+        <ProtectedAdminRoute exact path="/admin/direct/update" component={FacilityUpdate} url="facilityrequests" link="admin/facilityrequests" />
         <ProtectedAdminRoute exact path="/admin/direct/deactivation" component={FacilityDeactivation} />
         <ProtectedAdminRoute exact path="/admin/facilityrequests" component={FacilityRequests} />
         <ProtectedAdminRoute exact path="/admin/request/:id" component={RequestDetails} />
-        <ProtectedAdminRoute exact path="/admin/additionrequest" component={AdditionRequest} />
+    <ProtectedAdminRoute exact path="/admin/additionrequest" component={AdditionRequest} url="facilityrequests" link="admin/facilityrequests" />
         <ProtectedAdminRoute exact path="/admin/mfl" component={MasterFacilityList} />
         <ProtectedAdminRoute exact path="/admin/mfl/:id" component={FacilityDetails} />
         <Route path="*">
