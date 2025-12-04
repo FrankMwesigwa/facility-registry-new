@@ -8,7 +8,23 @@ import authenticate from "../middleware/auth.js";
 import MflService from "../services/mflService.js";
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/");
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${file.fieldname}_${Date.now()}_${file.originalname}`);
+    },
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        cb(null, true);
+    },
+});
 
 // GET endpoint to fetch latitude and longitude of health facilities
 router.get("/coordinates", async (req, res) => {
@@ -174,10 +190,14 @@ router.get("/district", authenticate, async (req, res) => {
 });
 
 // Create
-router.post("/", authenticate, async (req, res) => {
+router.post("/", authenticate, upload.any(), async (req, res) => {
     try {
-        const data = await MflService.create(req.body);
-        res.status(201).json({ message: "MFL record created", data });
+        const data = {
+            ...req.body,
+            owner_id: req.user.id
+        };
+        const result = await MflService.create(data, req.files || []);
+        res.status(201).json({ message: "MFL record created", data: result });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

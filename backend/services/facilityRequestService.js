@@ -479,6 +479,8 @@ class FacilityRequestService {
                     contact_persontitle: request.contact_persontitle || null,
                     date_opened: request.date_opened || null,
                     bed_capacity: request.bed_capacity || null,
+                    operating_license: request.operating_license || null,
+                    district_letter: request.district_letter || null,
                     services: request.services || [],
                     user_district_id: request.user_district_id || null,
                     owner_id: request.requested_by || existingMfl.owner_id || null,
@@ -544,11 +546,13 @@ class FacilityRequestService {
             contact_personmobile: request.contact_personmobile || null,
             contact_personname: request.contact_personname || null,
             contact_persontitle: request.contact_persontitle || null,
-            date_opened: request.date_opened || null,
-            bed_capacity: request.bed_capacity || null,
-            services: request.services || [],
-            user_district_id: request.user_district_id || null,
-            owner_id: request.requested_by || null,
+                    date_opened: request.date_opened || null,
+                    bed_capacity: request.bed_capacity || null,
+                    operating_license: request.operating_license || null,
+                    district_letter: request.district_letter || null,
+                    services: request.services || [],
+                    user_district_id: request.user_district_id || null,
+                    owner_id: request.requested_by || null,
         }, { transaction });
 
         // Broadcast facility.created
