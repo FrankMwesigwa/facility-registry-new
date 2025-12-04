@@ -21,21 +21,23 @@ class MflService {
     }
 
     static async getStats() {
-        const [
-            totalFacilities,
-            government,
-            pnfp,
-            privateOwned,
-            functional,
-            nonFunctional,
-        ] = await Promise.all([
-            Mfl.count(),
-            Mfl.count({ where: { ownership: "GOV" } }),
-            Mfl.count({ where: { ownership: "PNFP" } }),
-            Mfl.count({ where: { ownership: "PFP" } }),
-            Mfl.count({ where: { status: "Functional" } }),
-            Mfl.count({ where: { status: { [Op.in]: ["Non-Functional", "Non Functional", "Nonfunctional", "Non functional"] } } }),
-        ]);
+        const government = await Mfl.count({ where: { ownership: "GOV" } });
+        const pnfp = await Mfl.count({ where: { ownership: "PNFP" } });
+        const privateOwned = await Mfl.count({ where: { ownership: "PFP" } });
+        const totalFacilities = government + pnfp + privateOwned;
+
+        const functional = await Mfl.count({
+            where: {
+                status: "Functional",
+                ownership: { [Op.in]: ["GOV", "PNFP", "PFP"] }
+            }
+        });
+        const nonFunctional = await Mfl.count({
+            where: {
+                status: { [Op.in]: ["Non-Functional", "Non Functional", "Nonfunctional", "Non functional"] },
+                ownership: { [Op.in]: ["GOV", "PNFP", "PFP"] }
+            }
+        });
 
         return {
             totalFacilities,
