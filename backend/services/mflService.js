@@ -9,8 +9,33 @@ class MflService {
         // Generates a numeric seed suitable for generateFacilityIdentifier (0..9,999,999)
         return Math.floor(Math.random() * 10000000);
     }
-    static async create(data) {
-        return await Mfl.create(data);
+    static async create(data, files = []) {
+        const coerceFloat = (v) => {
+            const n = parseFloat(String(v ?? '').trim());
+            return Number.isFinite(n) ? n : null;
+        };
+        const coerceJsonArray = (v) => {
+            if (!v) return [];
+            if (Array.isArray(v)) return v;
+            const s = String(v).trim();
+            try {
+                const parsed = JSON.parse(s);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch {
+                // Fallback: split by comma
+                return s.length ? s.split(',').map(x => x.trim()).filter(Boolean) : [];
+            }
+        };
+
+        const mflData = {
+            ...data,
+            longtitude: coerceFloat(data.longtitude),
+            latitude: coerceFloat(data.latitude),
+            services: coerceJsonArray(data.services),
+            operating_license: files.find(f => f.fieldname === "operating_license")?.path || null,
+            district_letter: files.find(f => f.fieldname === "district_letter")?.path || null,
+        };
+        return await Mfl.create(mflData);
     }
 
     static async findAllCoordinates() {
@@ -241,12 +266,24 @@ class MflService {
         });
     }
 
-    static async update(facilityId, data) {
+    static async update(facilityId, data, files = []) {
+        const coerceFloat = (v) => {
+            const n = parseFloat(String(v ?? '').trim());
+            return Number.isFinite(n) ? n : null;
+        };
+
         const record = await Mfl.findOne({ where: { facility_id: facilityId } });
         if (!record) {
             throw new Error("MFL record not found");
         }
-        return await record.update(data);
+        const updatedData = {
+            ...data,
+            longtitude: coerceFloat(data.longtitude),
+            latitude: coerceFloat(data.latitude),
+            operating_license: files.find(f => f.fieldname === "operating_license")?.path || record.operating_license,
+            district_letter: files.find(f => f.fieldname === "district_letter")?.path || record.district_letter,
+        };
+        return await record.update(updatedData);
     }
 
     static async remove(facilityId) {
@@ -271,6 +308,11 @@ class MflService {
         if (!ownerId) {
             throw new Error("ownerId is required to upload MFL data");
         }
+
+        const coerceFloat = (v) => {
+            const n = parseFloat(String(v ?? '').trim());
+            return Number.isFinite(n) ? n : null;
+        };
 
         const rows = await sequelize.query(
             `
@@ -318,8 +360,8 @@ class MflService {
                     uid: r.uid ?? null,
                     name: r.name ?? null,
                     shortname: r.shortname ?? null,
-                    longtitude: r.longtitude ?? null,
-                    latitude: r.latitude ?? null,
+                    longtitude: coerceFloat(r.longtitude),
+                    latitude: coerceFloat(r.latitude),
                     nhfrid: r.nhfrid ?? null,
                     subcounty_uid: r.subcounty_uid ?? null,
                     subcounty: r.subcounty ?? null,
@@ -334,6 +376,8 @@ class MflService {
                     subcounty_id: r.subcounty_id ?? null,
                     district_id: r.district_id ?? null,
                     region_id: r.region_id ?? null,
+                    operating_license: r.operating_license ?? null,
+                    district_letter: r.district_letter ?? null,
                     owner_id: ownerId,
                 };
 
@@ -362,7 +406,8 @@ class MflService {
      * subcounty_uid, subcounty, district_uid, district, region, level, ownership,
      * authority, status, facility_id, subcounty_id, district_id, region_id,
      * licensed, address, contact_personemail, contact_personmobile, contact_personname,
-     * contact_persontitle, date_opened, bed_capacity, services, user_district_id, owner_id.
+     * contact_persontitle, date_opened, bed_capacity, services, user_district_id,
+     * operating_license, district_letter, owner_id.
      *
      * Upsert priority: uid -> nhfrid -> create new.
      */
@@ -435,6 +480,8 @@ class MflService {
                     bed_capacity: r.bed_capacity ?? null,
                     services: coerceJsonArray(r.services),
                     user_district_id: coerceInt(r.user_district_id),
+                    operating_license: r.operating_license ?? null,
+                    district_letter: r.district_letter ?? null,
                     owner_id: ownerId,
                 };
 

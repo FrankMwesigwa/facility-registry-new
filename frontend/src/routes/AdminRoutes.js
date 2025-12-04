@@ -55,7 +55,7 @@ const AdminRoutes = () => (
         <ProtectedAdminRoute exact path="/admin/dashboard" component={Dashboard} />
         <ProtectedAdminRoute exact path="/admin/units" component={AdminUnits} />
         <ProtectedAdminRoute exact path="/admin/levels" component={AdminLevels} />
-        <ProtectedAdminRoute exact path="/admin/direct/addition" component={FacilityAddition} url="facilityrequests" link="admin/facilityrequests" />
+        <ProtectedAdminRoute exact path="/admin/direct/addition" component={FacilityAddition} url="mfl" link="admin/facilityrequests" />
         <ProtectedAdminRoute exact path="/admin/direct/update" component={FacilityUpdate} url="facilityrequests" link="admin/facilityrequests" />
         <ProtectedAdminRoute exact path="/admin/direct/deactivation" component={FacilityDeactivation} />
         <ProtectedAdminRoute exact path="/admin/facilityrequests" component={FacilityRequests} />

@@ -119,6 +119,14 @@ const Mfl = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        operating_license: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        district_letter: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         services: {
             type: DataTypes.JSONB,
             allowNull: true,

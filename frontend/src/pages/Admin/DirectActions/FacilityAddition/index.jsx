@@ -15,7 +15,7 @@ const AdditionRequest = ({url, link, role}) => {
         licensed: '',
         address: '',
         latitude: '',
-        longitude: '',
+        longtitude: '',
         contact_personemail: '',
         contact_personmobile: '',
         contact_personname: '',
@@ -476,12 +476,12 @@ const handleSubmit = async (e) => {
                                         <div className="col-md-3">
                                             <div className="mb-3">
                                                 <label className="form-label">Longitude</label>
-                                                <input type="number" 
-                                                       className="form-control" 
-                                                       name="longitude"
-                                                       value={formData.longitude}
+                                                <input type="number"
+                                                       className="form-control"
+                                                       name="longtitude"
+                                                       value={formData.longtitude}
                                                        onChange={handleInputChange}
-                                                       placeholder="0.000000" 
+                                                       placeholder="0.000000"
                                                        step="any" />
                                             </div>
                                         </div>
