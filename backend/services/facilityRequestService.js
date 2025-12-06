@@ -242,14 +242,14 @@ class FacilityRequestService {
     }
 
     /**
-     * Get paginated requests for admin (MOH verified)
+     * Get paginated requests for admin (all pending requests that can be approved)
      */
     static async getAdminRequests(page = 1, limit = 100) {
         const offset = (page - 1) * limit;
 
         return await FacilityRequests.findAll({
             where: {
-                status: ["moh_verified"]
+                status: ["initiated", "district_approved", "planning_approved", "moh_verified"]
             },
             limit,
             offset,
